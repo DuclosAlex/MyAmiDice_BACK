@@ -4,7 +4,7 @@ const coreModel = {
 
     async getAll (table) {
 
-        let query = `SELECT get_${table}()`;
+        let query = `SELECT * FROM get_${table}()`;
 
         const result = await db.query(query);
         return result.rows;
@@ -14,7 +14,7 @@ const coreModel = {
 
         let values = id;
 
-        let query = ` SELECT get_${table}_by_id(${values})`;
+        let query = ` SELECT * FROM get_${table}_by_id(${values})`;
 
         const result = await db.query(query);
         return result.rows[0];
@@ -23,7 +23,7 @@ const coreModel = {
     async deleteById ( table, id) {
 
         let values = id;
-        let query = ` SELECT delete_${table}_by_id(${values})`;
+        let query = ` SELECT * FROM delete_${table}_by_id(${values})`;
 
         const result = await db.query(query);
         return result.rows[0];
@@ -31,25 +31,24 @@ const coreModel = {
 
     async createOrUpdate ( table, data) {
 
-        console.log("dataModel", data);
-
-        let array = [];
+        let values = [];
+        let nbDollar = [];
+        let counter = 1;
 
         for( key in data) {
 
             console.log("key", key);
 
-            array.push(data[key]);
+            values.push(data[key]);
+            nbDollar.push(`$${counter}`)
+            counter++;
         };
-        
 
-        console.log("array", array)
-
-        let query = ` SELECT create_or_update_${table}_with_result( ${ array.map( value => ` '${value}' `)})`;
+        let query = ` SELECT * FROM create_or_update_${table}_with_result( ${nbDollar.map( dollar => dollar)} ) `;
 
         console.log("query", query)
 
-        const result = await db.query(query);
+        const result = await db.query(query,  values );
 
         return result.rows[0];
     }
