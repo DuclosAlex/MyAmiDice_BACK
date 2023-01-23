@@ -7,10 +7,35 @@ GetAll
 
 # Users 
 
-GetAll
-GetOne
+Create
+update
+getAll
+getOneUser
 Delete
 
+# Games
 
-# 
 
+GetAll
+CreateOrUpdate
+Delete
+
+# Character
+
+CreateOrUpdate
+Delete
+
+# Items
+
+createOrUpdate
+Delete
+
+# Skill
+
+CreateOrUpdate
+Delete
+
+# Maps
+
+CreateOrUpdate
+Delete
