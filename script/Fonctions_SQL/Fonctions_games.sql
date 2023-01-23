@@ -4,7 +4,7 @@ RETURNS TABLE("id" INTEGER, "name" TEXT, "max_players" INT, "notes" TEXT, "statu
     SELECT * FROM "Games";
 $$ LANGUAGE SQL;
 -- Test de fonction OK
-SELECT get_games()
+--SELECT * get_games()
 
 -- Créer la "Games" et retourne les info (mj=user_id) ou update le status et/ou nom
 CREATE OR REPLACE FUNCTION create_or_update_game_with_result(
