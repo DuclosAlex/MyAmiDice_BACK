@@ -5,3 +5,8 @@ BEGIN
     RETURN QUERY SELECT "Users".id, "Users".email, "Users".is_admin, "Users".firstname, "Users".lastname FROM "Users" WHERE "Users".email = test_email AND "Users".password = test_password;
 END;
 $$ LANGUAGE plpgsql;
+/*
+Test de la fonction OK
+SELECT * from login(
+	'bouya@mail.com', 'bouya')
+*/
