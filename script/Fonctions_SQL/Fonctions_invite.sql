@@ -7,9 +7,11 @@ CREATE OR REPLACE FUNCTION create_or_update_invite_with_result(
 )
 RETURNS TABLE("id" INTEGER, game_id INT, "user_id" INT, "status" TEXT, "created_at" TIMESTAMPTZ, "updated_at" TIMESTAMPTZ) AS $$
 BEGIN
-    -- En first on essai l'update 
+    --en First on récupére l'id de l'invité dans new_userid
+    SELECT "Users".id INTO new_userid FROM "Users" WHERE "Users".email = new_useremail;
+    -- puis on essai l'update 
     UPDATE "Invite" SET "status" = new_status WHERE "new_id" = "Invite".id;
-    IF NOT FOUND THEN 
+    IF NOT FOUND THEN --si l'update échou, alors on insert:
         INSERT INTO "Invite" ( game_id, user_id, status) VALUES ( new_gameid, new_userid, new_status) RETURNING "Invite".id INTO new_id; -- on stock la valeur de l'id créer dans "new_id"
     END IF;
     RETURN QUERY SELECT "Invite".id, "Invite".game_id, "Invite"."user_id", "Invite"."status", "Invite".created_at, "Invite".updated_at FROM "Invite" WHERE "Invite".id = new_id;
