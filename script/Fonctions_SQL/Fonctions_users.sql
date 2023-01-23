@@ -16,7 +16,7 @@ $$ LANGUAGE SQL;
 
 
 -- Met l’utilisateur “:id” à jour ou Créer un nouvel utilisateur en base de données si il n'existe pas
-CREATE OR REPLACE FUNCTION create_or_update_user_with_result(
+CREATE OR REPLACE FUNCTION create_or_update_users_with_result(
 	IN new_id INT,
     IN new_pseudo TEXT, 
     IN new_email email, 
