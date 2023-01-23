@@ -44,11 +44,11 @@ BEGIN
     "Items"."quantity",
     "Items"."description"
     FROM "Characters"
-    JOIN "Skills"
+    FULL JOIN "Skills"
     ON "Characters"."id" = "Skills"."character_id"
-    JOIN "Characteristics"
+    FULL JOIN "Characteristics"
     ON "Characters"."id" = "Characteristics"."character_id"
-    JOIN "Items"
+    FULL JOIN "Items"
     ON "Characters"."id" = "Items"."character_id"
     WHERE "Characters"."id" = char_id;
 END;

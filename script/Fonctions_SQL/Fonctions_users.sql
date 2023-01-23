@@ -71,4 +71,4 @@ BEGIN
     INSERT "Users" ( pseudo, email, "password", is_admin, firstname, lastname) VALUES ( new_pseudo, new_email, new_password, false, new_firstname, new_lastname) RETURNING "Users".id INTO new_id ;
     RETURN QUERY SELECT "Users".id,"Users".pseudo, "Users".email, "Users".is_admin, "Users".firstname, "Users".lastname FROM "Users" WHERE "Users".id = new_id;
 END
-$$ LANGUAGE SQL;
+$$ LANGUAGE plpgsql;
