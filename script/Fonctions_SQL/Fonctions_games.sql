@@ -20,9 +20,9 @@ BEGIN
     -- En first on essai l'update 
     UPDATE "Games" SET "name" = "new_name", "notes" = "new_notes", "status" = "new_status" WHERE "new_id" = "Games".id;
     IF NOT FOUND THEN 
-        INSERT INTO "Games" ( "name", "max_players", "notes", "status", "user_id") VALUES ( "new_name", "new_max_players", "new_notes", "new_status", "new_user_id");
+        INSERT INTO "Games" ( "name", "max_players", "notes", "status", "user_id") VALUES ( "new_name", "new_max_players", "new_notes", "new_status", "new_user_id") RETURNING "Games".id INTO new_id;
     END IF;
-    SELECT "Games".id,"Games"."name", "Games"."max_players", "Games"."notes", "Games"."status", "Games"."user_id" FROM "Games" WHERE "Games".id = new_id;
+    RETURN QUERY SELECT "Games".id,"Games"."name", "Games"."max_players", "Games"."notes", "Games"."status", "Games"."user_id" FROM "Games" WHERE "Games".id = new_id;
 END
 $$ LANGUAGE plpgsql;
 -- Test de fonction OK
