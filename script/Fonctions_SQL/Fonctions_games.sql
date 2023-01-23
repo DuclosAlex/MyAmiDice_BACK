@@ -30,3 +30,11 @@ SELECT create_or_update_game_with_result(0,'maGame',4, ' ', 'break',2); -- Creer
 SELECT create_or_update_game_with_result(1,'maGame2',4, ' ', 'break',4); -- Update un utilisateur quand "id" existe
 SELECT * FROM "Games"
 
+
+-- Supprime la games “:id”
+CREATE OR REPLACE FUNCTION delete_games_by_id(game_id INT)
+RETURNS VOID AS $$
+    DELETE FROM "Games" WHERE "id" = game_id;
+$$ LANGUAGE SQL;
+-- Test de fonction OK
+SELECT delete_games_by_id(1);
