@@ -1,4 +1,3 @@
--- SQLBook: Code
 -- Renvoi la liste de tout les utilisateurs
 CREATE OR REPLACE FUNCTION get_users() 
 RETURNS TABLE("id" INTEGER, "pseudo" TEXT, "password" TEXT, "email" TEXT, "is_admin" BOOLEAN, "lastname" TEXT, "firstname" TEXT, "created_at" TIMESTAMPTZ, "updated_at" TIMESTAMPTZ) AS $$
@@ -6,14 +5,16 @@ RETURNS TABLE("id" INTEGER, "pseudo" TEXT, "password" TEXT, "email" TEXT, "is_ad
 $$ LANGUAGE SQL;
 -- Test de fonction OK
 -- SELECT get_users()
--- SQLBook: Code
+
+
 CREATE OR REPLACE FUNCTION get_users_by_id(userid INTEGER)
 RETURNS TABLE ("id" INTEGER, "pseudo" TEXT, "password" TEXT, "email" TEXT, "is_admin" BOOLEAN, "lastname" TEXT, "firstname" TEXT, "created_at" TIMESTAMPTZ, "updated_at" TIMESTAMPTZ) AS $$
     SELECT * FROM "Users" WHERE "id" = userid;
 $$ LANGUAGE SQL;
 -- Test de fonction OK
 -- SELECT get_users_by_id(1);
--- SQLBook: Code
+
+
 -- Met l’utilisateur “:id” à jour ou Créer un nouvel utilisateur en base de données si il n'existe pas
 CREATE OR REPLACE FUNCTION create_or_update_user_with_result(
 	IN new_id INT,
@@ -36,7 +37,8 @@ $$ LANGUAGE plpgsql;
 -- Test de la fonction
 -- SELECT create_or_update_user_with_result(1, 'Vaqh_Omegaaa', 'dujmat@hotmail.fr', 'test', 'Mathieu', 'Dujardin'); -- Update un utilisateur quand "id" existe
 -- SELECT create_or_update_user_with_result(0, 'Vaqh_Omega', 'dujmat@hotmail.fr', 'test', 'Mathieu', 'Dujardin'); -- Creer un utilisateur quand "id" n'existe pas
--- SQLBook: Code
+
+
 -- Supprime l’utilisateur “:id” de la base de données
 CREATE OR REPLACE FUNCTION delete_users_by_id(userid INTEGER)
 RETURNS VOID AS $$
@@ -44,7 +46,8 @@ RETURNS VOID AS $$
 $$ LANGUAGE SQL;
 -- Test de fonction OK
 -- SELECT delete_users_by_id(1);
--- SQLBook: Code
+
+
 CREATE OR REPLACE FUNCTION get_game_and_characs_by_user(userid INTEGER)
 RETURNS TABLE (charac_name TEXT, game_name TEXT, game_status TEXT, name_user_mj TEXT) AS $$
     SELECT "Characters".firstname, "Games".name, "Games".status, "Users".pseudo FROM "Users"

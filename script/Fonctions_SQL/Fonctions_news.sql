@@ -21,9 +21,8 @@ $$ LANGUAGE plpgsql;
 
 -- Supprime la news “:id”
 CREATE OR REPLACE FUNCTION delete_news_by_id(newsid INTEGER)
-RETURNS TABLE("id" INTEGER, "title" TEXT, "content" TEXT, "user_id" INT, "created_at" TIMESTAMPTZ, "updated_at" TIMESTAMPTZ) AS $$
+RETURNS VOID AS $$
     DELETE FROM "News" WHERE "id" = newsid;
-    SELECT * FROM "News";
 $$ LANGUAGE SQL;
 -- Test de fonction OK
 --SELECT delete_news_by_id(5);
