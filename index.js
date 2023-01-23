@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const router = require('./app/router/index');
+const { characterRouter, userRouter } = require('./app/router');
 const multer = require('multer');
 
 const app = express();
@@ -13,7 +13,8 @@ const bodyParser = multer();
 
 app.use(bodyParser.none());
 
-app.use(router);
+app.use('/characters', characterRouter);
+app.use('/users/', userRouter);
 
 const port = process.env.PORT || 3000;
 

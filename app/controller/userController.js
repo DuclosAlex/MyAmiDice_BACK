@@ -1,9 +1,9 @@
-const User = require('../model/userModel');
+const { userModel} = require('../model');
 const coreController = require('./coreController');
 
 const userController = {
 
-    basicQuery : coreController.createBaseQuery(User, "users")
+    basicQuery : coreController.createBaseQuery( userModel, "users")
 }
 
 module.exports = userController;

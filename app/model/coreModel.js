@@ -46,7 +46,7 @@ const coreModel = {
 
         let query = ` SELECT * FROM create_or_update_${table}_with_result( ${nbDollar.map( dollar => dollar)} ) `;
 
-        console.log("query", query)
+        console.log("query", query);
 
         const result = await db.query(query,  values );
 
