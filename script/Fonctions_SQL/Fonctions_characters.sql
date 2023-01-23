@@ -82,3 +82,15 @@ $$ LANGUAGE plpgsql;
 SELECT * from create_or_update_characters_with_result(
 	2, 'grobarg', 'trackmort', 'test', 'ORKS', 'brutal badass', TRUE) 
 */
+
+
+CREATE OR REPLACE FUNCTION delete_characters_by_id(IN char_id INT)
+RETURNS VOID AS $$
+    DELETE FROM "Characters" WHERE "id" = char_id;
+$$ LANGUAGE SQL;
+/*
+Script de TEST de la fonction:
+
+SELECT delete_characters_by_id(1);
+SELECT * FROM "Characters";
+*/

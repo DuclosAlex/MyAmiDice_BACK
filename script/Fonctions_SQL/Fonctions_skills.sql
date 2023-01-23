@@ -20,3 +20,14 @@ Test de la fonction OK :
 SELECT * from create_or_update_skills_with_result(
 	3, 'kikoup de la mort', 'casse tout !', 2) 
 */
+
+CREATE OR REPLACE FUNCTION delete_skills_by_id(IN skill_id INT)
+RETURNS VOID AS $$
+    DELETE FROM "Skills" WHERE "id" = skill_id;
+$$ LANGUAGE SQL;
+/*
+Script de TEST de la fonction:
+
+SELECT delete_skills_by_id(1);
+SELECT * FROM "Skills";
+*/

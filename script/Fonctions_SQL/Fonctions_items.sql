@@ -20,4 +20,16 @@ $$ LANGUAGE plpgsql;
 Test de la fonction ok
 SELECT * from create_or_update_items_with_result(
 	0, 'pain elfique', 2, 'rations pour taffioles !', 1)
+*/
+
+
+CREATE OR REPLACE FUNCTION delete_items_by_id(IN item_id INT)
+RETURNS VOID AS $$
+    DELETE FROM "Items" WHERE "id" = item_id;
+$$ LANGUAGE SQL;
 /*
+Script de TEST de la fonction:
+
+SELECT delete_items_by_id(1);
+SELECT * FROM "Items";
+*/
