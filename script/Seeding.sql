@@ -38,7 +38,8 @@ INSERT INTO "Maps" ("name", "category", "url") VALUES
 INSERT INTO "Invite" ("game_id", "user_id", "status") VALUES 
     (1,2, 'in progress');
 
-INSERT INTO "Content" ("game_id", "map_id") VALUES 
+
+INSERT INTO "game_has_maps" ("game_id", "map_id") VALUES 
     (1,1);
 
 COMMIT;
