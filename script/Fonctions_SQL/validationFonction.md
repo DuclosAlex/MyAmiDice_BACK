@@ -24,6 +24,7 @@ Delete
 
 CreateOrUpdate
 Delete
+getOneWithAll
 
 # Items
 
@@ -39,3 +40,12 @@ Delete
 
 CreateOrUpdate
 Delete
+
+## Invite
+
+CreateOrUpdate
+Delete
+
+## Characteristics 
+
+CreateOrUpdate

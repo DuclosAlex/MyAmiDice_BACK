@@ -5,6 +5,8 @@ const gameRouter = require('./gameRouter');
 const itemRouter = require('./itemRouter');
 const skillRouter = require('./skillRouter');
 const mapRouter = require('./mapRouter');
+const inviteRouter = require('./inviteRouter');
+const characteristicRouter = require('./characteristicRouter')
 
 
 module.exports = {
@@ -14,6 +16,8 @@ module.exports = {
     gameRouter,
     itemRouter,
     skillRouter,
-    mapRouter
+    mapRouter,
+    inviteRouter,
+    characteristicRouter
     
 }

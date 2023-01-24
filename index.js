@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { characterRouter, userRouter, newsRouter, gameRouter, itemRouter, skillRouter, mapRouter } = require('./app/router');
+const { characterRouter, userRouter, newsRouter, gameRouter, itemRouter, skillRouter, mapRouter, inviteRouter, characteristicRouter } = require('./app/router');
 const multer = require('multer');
 
 const app = express();
@@ -20,6 +20,8 @@ app.use('/games', gameRouter);
 app.use('/items', itemRouter);
 app.use('/skills', skillRouter);
 app.use('/maps', mapRouter);
+app.use('/invites', inviteRouter);
+app.use('/characteristics', characteristicRouter)
 
 const port = process.env.PORT || 3000;
 

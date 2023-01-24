@@ -40,6 +40,7 @@ CREATE TABLE IF NOT EXISTS "Games" (
     "max_players" INT NOT NULL,
     "notes" TEXT,
     "status" TEXT NOT NULL,
+    "description" TEXT NOT NULL,
     "user_id" INT REFERENCES "Users"("id") ON DELETE CASCADE,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP, -- on peut également utiliser NOW()
     "updated_at" TIMESTAMPTZ
@@ -88,7 +89,7 @@ CREATE TABLE IF NOT EXISTS "Characteristics"(
     "intelligence"INT NOT NULL,
     "level" INT NOT NULL,
     "hp" INT NOT NULL,
-    "character_id" INT REFERENCES "Characters"("id") ON DELETE CASCADE,
+    "character_id" INT UNIQUE REFERENCES "Characters"("id") ON DELETE CASCADE,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP, -- on peut également utiliser NOW()
     "updated_at" TIMESTAMPTZ
 );
