@@ -1,3 +1,4 @@
+-- SQLBook: Code
 --Vérifié les infos d'un user par ses login et si les info sont bonne on renvoie les perso et les games du users
 CREATE OR REPLACE FUNCTION user_login(IN test_email email, IN test_password TEXT)
 RETURNS TABLE("id" INT, "email" email, is_admin BOOLEAN, firstname TEXT, lasname TEXT, charac_name TEXT, game_name TEXT, game_status TEXT, name_user_mj TEXT, invite_status TEXT, invite_game INT) AS $$

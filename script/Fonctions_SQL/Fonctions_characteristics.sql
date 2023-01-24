@@ -1,3 +1,4 @@
+-- SQLBook: Code
 --Met à jour les stats(Characteristics) d'un personnage "id" en bdd
 CREATE OR REPLACE FUNCTION update_characteristics_by_char_id(IN char_id INT, IN new_strength INT, IN new_dexterity INT, IN new_wisdom INT, IN new_charisma INT, IN new_constitution INT, IN new_intelligence INT, IN new_level INT, IN new_hp INT)
 RETURNS TABLE(
