@@ -1,3 +1,4 @@
+-- SQLBook: Code
 -- Met l'invite “:id” à jour ou Créer une nouvelle invite en base de données si il n'existe pas
 CREATE OR REPLACE FUNCTION create_or_update_invite_with_result(
 	IN new_id INT,
