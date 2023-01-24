@@ -1,56 +1,22 @@
 -- SQLBook: Code
-CREATE OR REPLACE FUNCTION get_character_by_id_with_all(IN char_id INT)
-RETURNS TABLE(
-"Char_firstname" TEXT,
-"Char_lastname" TEXT ,
-"Char_description" TEXT,
-"Char_race" TEXT,
-"Char_class" TEXT,
-"Char_is_alive" BOOLEAN,
-"Skills_name" TEXT[],
-"Skills_description" TEXT[],
-"stats_strength" INT,
-"stats_dexterity" INT,
-"stats_wisdom" INT,
-"stats_charisma" INT,
-"stats_constitution" INT,
-"stats_intelligence" INT,
-"stats_level" INT,
-"stats_hp" INT,
-"Items_name" TEXT[],
-"Items_quantity" INT[],
-"Items_description" TEXT[]
-) AS $$
+CREATE OR REPLACE FUNCTION get_character_by_id_with_all(
+    IN char_id INT
+)
+RETURNS TABLE("id" INTEGER, firstname TEXT, lastname TEXT, "description" TEXT, race TEXT, "class" TEXT, is_alive BOOLEAN, "skills" json, "items" json) AS $$
+
 BEGIN
-RETURN QUERY
-SELECT
-"Characters".firstname as "Char_firstname",
-"Characters"."lastname" as "Char_lastname",
-"Characters"."description" as "Char_description",
-"Characters"."race" as "Char_race",
-"Characters"."class" as "Char_class",
-"Characters"."is_alive" as "Char_is_alive",
-array_agg("Skills"."name") as "Skills_name",
-array_agg("Skills"."description") as "Skills_description",
-"Characteristics"."strength" as "stats_strength",
-"Characteristics"."dexterity" as "stats_dexterity",
-"Characteristics"."wisdom" as "stats_wisdom",
-"Characteristics"."charisma" as "stats_charisma",
-"Characteristics"."constitution" as "stats_constitution",
-"Characteristics"."intelligence" as "stats_intelligence",
-"Characteristics"."level" as "stats_level",
-"Characteristics"."hp" as "stats_hp",
-array_agg("Items"."name") as "Items_name",
-array_agg("Items"."quantity") as "Items_quantity",
-array_agg("Items"."description") as "Items_description"
-FROM "Characters"
-JOIN "Skills" ON "Characters"."id" = "Skills"."character_id"
-JOIN "Characteristics" ON "Characters"."id" = "Characteristics"."character_id"
-JOIN "Items" ON "Characters"."id" = "Items"."character_id"
-WHERE "Characters"."id" = char_id
-GROUP BY "Characters".firstname, "Characters"."lastname", "Characters"."description", "Characters"."race", "Characters"."class", "Characters"."is_alive", "Characteristics"."strength", "Characteristics"."dexterity", "Characteristics"."wisdom", "Characteristics"."charisma", "Characteristics"."constitution", "Characteristics"."intelligence", "Characteristics"."level", "Characteristics"."hp";
+SELECT row_to_json(Charac) as "result"
+    FROM (
+    SELECT *, (
+        SELECT json_agg(row_to_json("Skills")) FROM "Skills" WHERE "Characters".id = "Skills".character_id
+        ) skills, (
+        SELECT json_agg(row_to_json("Items")) FROM "Items" WHERE "Characters".id = "Items".character_id
+        ) items
+        FROM "Characters" WHERE "Characters".id = char_id
+    ) Charac; 
+
 END;
-$$ LANGUAGE plpgsql
+$$ LANGUAGE plpgsql;
 --test de la fonction 
 --SELECT * FROM get_character_by_id_with_all(1) 
 

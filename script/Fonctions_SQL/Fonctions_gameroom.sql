@@ -1,20 +1,20 @@
 -- SQLBook: Code
 --Récupére la gameroom, le mj, les joueurs, et tout le personnage avec ses possessions.
-CREATE OR REPLACE FUNCTION gameroom_by_id(userid INT, gameid INT)
+CREATE OR REPLACE FUNCTION gameroom_by_id1(userid INT, gameid INT)
 RETURNS TABLE(
 	Games_name TEXT,
 	Games_notes TEXT,
 	Users_pseudo_mj TEXT,
-	Maps_name TEXT,
-	Maps_url url,
+	Maps_name TEXT[],
+	Maps_url url[],
 	Characters_firstname TEXT,
     Characters_lastname TEXT,
     Characters_description TEXT,
     Characters_race TEXT,
     Characters_class TEXT,
     Characters_is_alive BOOLEAN,
-    Skills_name TEXT,
-    Skills_description TEXT,
+    Skills_name TEXT[],
+    Skills_description TEXT[],
     Characteristics_strength INT,
     Characteristics_dexterity INT,
     Characteristics_wisdom INT,
@@ -23,25 +23,25 @@ RETURNS TABLE(
     Characteristics_intelligence INT,
     Characteristics_level INT,
     Characteristics_hp INT,
-    Items_name TEXT,
-    Items_quantity INT,
-    Items_description TEXT
+    Items_name TEXT[],
+    Items_quantity INT[],
+    Items_description TEXT[]
 ) AS $$
 BEGIN
 	RETURN QUERY SELECT 
 	"Games"."name",
 	"Games"."notes",
 	"Users"."pseudo",
-	"Maps"."name",
-	"Maps"."url",
+	array_agg("Maps"."name"),
+	array_agg("Maps"."url"),
 	"Characters"."firstname",
     "Characters"."lastname",
     "Characters"."description",
     "Characters"."race",
     "Characters"."class",
     "Characters"."is_alive",
-    "Skills"."name",
-    "Skills"."description",
+    array_agg("Skills"."name"),
+    array_agg("Skills"."description"),
     "Characteristics"."strength",
     "Characteristics"."dexterity",
     "Characteristics"."wisdom",
@@ -50,9 +50,9 @@ BEGIN
     "Characteristics"."intelligence",
     "Characteristics"."level",
     "Characteristics"."hp",
-    "Items"."name",
-    "Items"."quantity",
-    "Items"."description" 
+    array_agg("Items"."name"),
+    array_agg("Items"."quantity"),
+    array_agg("Items"."description")
 	FROM "Games"
 	FULL JOIN "Users" ON "Games"."user_id" = "Users"."id"
 	FULL JOIN "game_has_maps" ON "Games"."id" = "game_has_maps"."game_id"
@@ -62,22 +62,40 @@ BEGIN
 	FULL JOIN "Skills" ON "Characters"."id" = "Skills"."character_id"
 	FULL JOIN "Items" ON "Characters"."id" = "Items"."character_id"
 	WHERE "Games"."id" = gameid
-	AND "Games"."user_id" = userid;
+	AND "Games"."user_id" = userid
+	GROUP BY 
+	"Games"."name",
+	"Games"."notes",
+	"Users"."pseudo",
+	"Characters"."firstname",
+    "Characters"."lastname",
+    "Characters"."description",
+    "Characters"."race",
+    "Characters"."class",
+    "Characters"."is_alive",
+    "Characteristics"."strength",
+    "Characteristics"."dexterity",
+    "Characteristics"."wisdom",
+    "Characteristics"."charisma",
+    "Characteristics"."constitution",
+    "Characteristics"."intelligence",
+    "Characteristics"."level",
+    "Characteristics"."hp";
 	IF NOT FOUND THEN  -- si la fonction n'et pas lancer par le Mj elle retourne uniquement le personnage du joueur au lieu de tout les persos
 		RETURN QUERY SELECT 
 		"Games"."name",
 		"Games"."notes",
 		"Users"."pseudo",
-		"Maps"."name",
-		"Maps"."url",
+		array_agg("Maps"."name"),
+		array_agg("Maps"."url"),
 		"Characters"."firstname",
 		"Characters"."lastname",
 		"Characters"."description",
 		"Characters"."race",
 		"Characters"."class",
 		"Characters"."is_alive",
-		"Skills"."name",
-		"Skills"."description",
+		array_agg("Skills"."name"),
+		array_agg("Skills"."description"),
 		"Characteristics"."strength",
 		"Characteristics"."dexterity",
 		"Characteristics"."wisdom",
@@ -86,9 +104,9 @@ BEGIN
 		"Characteristics"."intelligence",
 		"Characteristics"."level",
 		"Characteristics"."hp",
-		"Items"."name",
-		"Items"."quantity",
-		"Items"."description" 
+		array_agg("Items"."name"),
+		array_agg("Items"."quantity"),
+		array_agg("Items"."description") 
 		FROM "Games"
 		FULL JOIN "Users" ON "Games"."user_id" = "Users"."id"
 		FULL JOIN "game_has_maps" ON "Games"."id" = "game_has_maps"."game_id"
@@ -98,7 +116,25 @@ BEGIN
 		FULL JOIN "Skills" ON "Characters"."id" = "Skills"."character_id"
 		FULL JOIN "Items" ON "Characters"."id" = "Items"."character_id"
 		WHERE "Games"."id" = gameid
-		AND "Characters".user_id = userid;
+		AND "Characters".user_id = userid
+		GROUP BY 
+		"Games"."name",
+		"Games"."notes",
+		"Users"."pseudo",
+		"Characters"."firstname",
+		"Characters"."lastname",
+		"Characters"."description",
+		"Characters"."race",
+		"Characters"."class",
+		"Characters"."is_alive",
+		"Characteristics"."strength",
+		"Characteristics"."dexterity",
+		"Characteristics"."wisdom",
+		"Characteristics"."charisma",
+		"Characteristics"."constitution",
+		"Characteristics"."intelligence",
+		"Characteristics"."level",
+		"Characteristics"."hp";
 	END IF;
 END;
 $$ LANGUAGE plpgsql;
