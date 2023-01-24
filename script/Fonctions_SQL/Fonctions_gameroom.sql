@@ -1,4 +1,5 @@
 -- SQLBook: Code
+--Récupére la gameroom, le mj, les joueurs, et tout le personnage avec ses possessions.
 CREATE OR REPLACE FUNCTION gameroom_by_id(userid INT, gameid INT)
 RETURNS TABLE(
 	Games_name TEXT,
@@ -62,7 +63,7 @@ BEGIN
 	FULL JOIN "Items" ON "Characters"."id" = "Items"."character_id"
 	WHERE "Games"."id" = gameid
 	AND "Games"."user_id" = userid;
-	IF NOT FOUND THEN 
+	IF NOT FOUND THEN  -- si la fonction n'et pas lancer par le Mj elle retourne uniquement le personnage du joueur au lieu de tout les persos
 		RETURN QUERY SELECT 
 		"Games"."name",
 		"Games"."notes",
