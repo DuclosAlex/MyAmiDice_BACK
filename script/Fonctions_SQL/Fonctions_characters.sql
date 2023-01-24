@@ -6,14 +6,14 @@ RETURNS TABLE( "character" json) AS $$
 BEGIN
 	RETURN QUERY SELECT row_to_json(Charac) as "character"
 	FROM (
-	SELECT *, (
-		SELECT json_agg(row_to_json("Skills")) FROM "Skills" WHERE "Characters".id = "Skills".character_id
+	SELECT "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters".is_alive, "Characters"."class", (
+		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT id, "name", "description") temptable))) FROM "Skills" WHERE "Characters".id = "Skills".character_id
 		) skills, (
-		SELECT json_agg(row_to_json("Items")) FROM "Items" WHERE "Characters".id = "Items".character_id
+		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT id, "name", "quantity", "description") temptable))) FROM "Items" WHERE "Characters".id = "Items".character_id
 		) items, (
-        SELECT json_agg(row_to_json("Characteristics")) FROM "Characteristics" WHERE "Characters".id = "CHaracteristics".character_id
+        SELECT json_agg(row_to_json((SELECT temptable FROM ( SELECT id, strength, dexterity, constitution, wisdom, charisma, intelligence, "level", hp) temptable))) FROM "Characteristics" WHERE "Characters".id = "Characteristics".character_id
         ) "characteristics"
-		FROM "Characters" WHERE "Characters".id = 14
+		FROM "Characters" WHERE "Characters".id = character_id
 	) Charac;
 END;
 $$ LANGUAGE plpgsql;

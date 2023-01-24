@@ -30,3 +30,27 @@ SELECT create_or_update_game_with_result(0,'maGame',4, ' ', 'break',2); -- Creer
 SELECT create_or_update_game_with_result(1,'maGame2',4, ' ', 'break',4); -- Update un utilisateur quand "id" existe
 SELECT * FROM "Games"
 
+CREATE OR REPLACE FUNCTION get_game_by_id_with_all(
+    IN gameroom_id INT
+)
+RETURNS TABLE( "gameroom" json) AS $$
+DECLARE
+	mapid INT;
+
+BEGIN
+
+	RETURN QUERY SELECT row_to_json(Game) as "gameroom"
+	FROM (
+	SELECT *, (
+		SELECT map.id FROM "game_has_maps" WHERE "game_has_maps".game_id = 5
+		RETURNING * INTO mapid,
+		SELECT json_agg(row_to_json("Characters")) FROM "Characters" WHERE "Games".id = "Characters".game_id
+		) "characters", (
+		SELECT json_agg(row_to_json("Maps")) FROM "Maps" WHERE mapid = "Maps".id
+		) maps, (
+        SELECT json_agg(row_to_json("Users")) FROM "Users" WHERE "Users".id = "Games".user_id
+        ) "users"
+		FROM "Games" WHERE "Games".id = 5
+	) Game;
+END;
+$$ LANGUAGE plpgsql;
