@@ -1,5 +1,5 @@
 CREATE OR REPLACE FUNCTION get_character_by_id_with_all(
-    IN game_id INT
+    IN character_id INT
 )
 RETURNS TABLE( "character" json) AS $$
 
@@ -10,7 +10,9 @@ BEGIN
 		SELECT json_agg(row_to_json("Skills")) FROM "Skills" WHERE "Characters".id = "Skills".character_id
 		) skills, (
 		SELECT json_agg(row_to_json("Items")) FROM "Items" WHERE "Characters".id = "Items".character_id
-		) items
+		) items, (
+        SELECT json_agg(row_to_json("Characteristics")) FROM "Characteristics" WHERE "Characters".id = "CHaracteristics".character_id
+        ) "characteristics"
 		FROM "Characters" WHERE "Characters".id = 14
 	) Charac;
 END;
