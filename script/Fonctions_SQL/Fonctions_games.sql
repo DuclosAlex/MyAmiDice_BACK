@@ -20,9 +20,9 @@ BEGIN
     -- En first on essai l'update 
     UPDATE "Games" SET "name" = "new_name", "notes" = "new_notes", "status" = "new_status" WHERE "new_id" = "Games".id;
     IF NOT FOUND THEN 
-        INSERT INTO "Games" ( "name", "max_players", "notes", "status", "user_id") VALUES ( "new_name", "new_max_players", "new_notes", "new_status", "new_user_id");
+        INSERT INTO "Games" ( "name", "max_players", "notes", "status", "user_id") VALUES ( "new_name", "new_max_players", "new_notes", "new_status", "new_user_id") RETURNING "Games".id INTO new_id;
     END IF;
-    SELECT "Games".id,"Games"."name", "Games"."max_players", "Games"."notes", "Games"."status", "Games"."user_id" FROM "Games" WHERE "Games".id = new_id;
+    RETURN QUERY SELECT "Games".id,"Games"."name", "Games"."max_players", "Games"."notes", "Games"."status", "Games"."user_id" FROM "Games" WHERE "Games".id = new_id;
 END
 $$ LANGUAGE plpgsql;
 -- Test de fonction OK
@@ -30,3 +30,11 @@ SELECT create_or_update_game_with_result(0,'maGame',4, ' ', 'break',2); -- Creer
 SELECT create_or_update_game_with_result(1,'maGame2',4, ' ', 'break',4); -- Update un utilisateur quand "id" existe
 SELECT * FROM "Games"
 
+
+-- Supprime la games “:id”
+CREATE OR REPLACE FUNCTION delete_games_by_id(game_id INT)
+RETURNS VOID AS $$
+    DELETE FROM "Games" WHERE "id" = game_id;
+$$ LANGUAGE SQL;
+-- Test de fonction OK
+SELECT delete_games_by_id(1);

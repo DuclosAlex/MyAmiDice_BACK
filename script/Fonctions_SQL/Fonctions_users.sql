@@ -47,10 +47,11 @@ $$ LANGUAGE SQL;
 
 
 CREATE OR REPLACE FUNCTION get_game_and_characs_by_user(userid INTEGER)
-RETURNS TABLE (charac_name TEXT, game_name TEXT, game_status TEXT, name_user_mj TEXT) AS $$
-    SELECT "Characters".firstname, "Games".name, "Games".status, "Users".pseudo FROM "Users"
+RETURNS TABLE (charac_name TEXT, game_name TEXT, game_status TEXT, name_user_mj TEXT, invite_status TEXT, invite_game INT) AS $$
+    SELECT "Characters".firstname, "Games".name, "Games".status, "Users".pseudo, "Invite".status, "Invite".game_id FROM "Users"
 	FULL JOIN "Games" ON "Users".id = "Games".user_id
 	FULL JOIN "Characters" ON "Users".id = "Characters".user_id
+    FULL JOIN "Invite" ON "Users".id = "Invite".user_id
 	WHERE "Users".id = userid;
 $$ LANGUAGE SQL;
 -- Test de fonction NOT OK
@@ -71,4 +72,4 @@ BEGIN
     INSERT "Users" ( pseudo, email, "password", is_admin, firstname, lastname) VALUES ( new_pseudo, new_email, new_password, false, new_firstname, new_lastname) RETURNING "Users".id INTO new_id ;
     RETURN QUERY SELECT "Users".id,"Users".pseudo, "Users".email, "Users".is_admin, "Users".firstname, "Users".lastname FROM "Users" WHERE "Users".id = new_id;
 END
-$$ LANGUAGE SQL;
+$$ LANGUAGE plpgsql;
