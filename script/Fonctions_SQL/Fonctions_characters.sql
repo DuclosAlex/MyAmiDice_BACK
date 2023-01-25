@@ -1,45 +1,22 @@
--- SQLBook: Code
 CREATE OR REPLACE FUNCTION get_character_by_id_with_all(
-    IN char_id INT
+    IN character_id INT
 )
-RETURNS TABLE("id" INTEGER, firstname TEXT, lastname TEXT, "description" TEXT, race TEXT, "class" TEXT, is_alive BOOLEAN, avatar url, "skills" json, "items" json) AS $$
+RETURNS TABLE( "character" json) AS $$
 
 BEGIN
-
-    RETURN QUERY 
-    SELECT  
-    "Characters"."firstname",
-    "Characters"."lastname",
-    "Characters"."description",
-    "Characters"."race",
-    "Characters"."class",
-    "Characters"."is_alive",
-    "Skills"."name",
-    "Skills"."description",
-    "Characteristics"."strength",
-    "Characteristics"."dexterity",
-    "Characteristics"."wisdom",
-    "Characteristics"."charisma",
-    "Characteristics"."constitution",
-    "Characteristics"."intelligence",
-    "Characteristics"."level",
-    "Characteristics"."hp",
-    "Items"."name",
-    "Items"."quantity",
-    "Items"."description"
-    FROM "Characters"
-    FULL JOIN "Skills"
-    ON "Characters"."id" = "Skills"."character_id"
-    FULL JOIN "Characteristics"
-    ON "Characters"."id" = "Characteristics"."character_id"
-    FULL JOIN "Items"
-    ON "Characters"."id" = "Items"."character_id"
-    WHERE "Characters"."id" = char_id;
+	RETURN QUERY SELECT row_to_json(Charac) as "character"
+	FROM (
+	SELECT "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters".is_alive, "Characters"."class", (
+		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT id, "name", "description") temptable))) FROM "Skills" WHERE "Characters".id = "Skills".character_id
+		) skills, (
+		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT id, "name", "quantity", "description") temptable))) FROM "Items" WHERE "Characters".id = "Items".character_id
+		) items, (
+        SELECT json_agg(row_to_json((SELECT temptable FROM ( SELECT id, strength, dexterity, constitution, wisdom, charisma, intelligence, "level", hp) temptable))) FROM "Characteristics" WHERE "Characters".id = "Characteristics".character_id
+        ) "characteristics"
+		FROM "Characters" WHERE "Characters".id = character_id
+	) Charac;
 END;
 $$ LANGUAGE plpgsql;
---test de la fonction 
---SELECT * FROM get_character_by_id_with_all(1) 
-
 
 -- Met le perso “:id” à jour ou Créer un nouveaux perso en base de données si il n'existe pas
 CREATE OR REPLACE FUNCTION create_or_update_characters_with_result(

@@ -1,9 +1,9 @@
 const coreModel = require('./coreModel');
 
-const charactertisticModel = {
+const characteristicModel = {
 
-    ...coreModel,
+    ...coreModel
 
 };
 
-module.exports = charactertisticModel;
+module.exports = characteristicModel;
