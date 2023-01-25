@@ -38,7 +38,6 @@ const userModel = {
             nbDollar.push(`$${counter}`)
             counter++;
         };
-        values[0] = Number(values[0]);
 
         try {
 
@@ -50,9 +49,43 @@ const userModel = {
  
         } catch(e) {
             console.log(e);
+            
         }
 
         return updateUser;
+    },
+
+    async loginUser (user) {
+
+        let userData;
+        let values = [];
+        let nbDollar = [];
+        let counter = 1;
+
+        for( key in user) {
+
+            console.log("key", key);
+
+            values.push(user[key]);
+            nbDollar.push(`$${counter}`)
+            counter++;
+        }
+
+        try {
+
+            const sqlQuery = ` SELECT * FROM user_login(  ${nbDollar.map( dollar => dollar)} )`;
+            
+            const result = await db.query(sqlQuery, values);
+
+            userData = result.rows[0];
+
+            console.log("user", userData);
+
+        } catch(e) {
+            console.log("error", e);
+        }
+
+        return userData;
     }
 
 };
