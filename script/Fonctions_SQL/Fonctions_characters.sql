@@ -2,7 +2,7 @@
 CREATE OR REPLACE FUNCTION get_character_by_id_with_all(
     IN char_id INT
 )
-RETURNS TABLE("id" INTEGER, firstname TEXT, lastname TEXT, "description" TEXT, race TEXT, "class" TEXT, is_alive BOOLEAN, "skills" json, "items" json) AS $$
+RETURNS TABLE("id" INTEGER, firstname TEXT, lastname TEXT, "description" TEXT, race TEXT, "class" TEXT, is_alive BOOLEAN, avatar url, "skills" json, "items" json) AS $$
 
 BEGIN
 SELECT row_to_json(Charac) as "result"
@@ -31,15 +31,16 @@ CREATE OR REPLACE FUNCTION create_or_update_characters_with_result(
     IN new_class TEXT,
     IN new_is_alive BOOLEAN,
     IN new_user_id INT,
-	IN new_game_id INT
+	IN new_game_id INT,
+    IN new_image url DEFAULT NULL
 
 )
 RETURNS TABLE("id" INTEGER, firstname TEXT, lastname TEXT, "description" TEXT, race TEXT, "class" TEXT, is_alive BOOLEAN, "created_at" TIMESTAMPTZ, "updated_at" TIMESTAMPTZ) AS $$
 BEGIN
     -- En first on essai l'update 
-    UPDATE "Characters" SET firstname = new_firstname, lastname = new_lastname, "description" = new_description, race = new_race, is_alive= new_is_alive, "class" = new_class WHERE "new_id" = "Characters".id;
+    UPDATE "Characters" SET firstname = new_firstname, lastname = new_lastname, "description" = new_description, race = new_race, is_alive= new_is_alive, "class" = new_class, avatar = new_image WHERE "new_id" = "Characters".id;
     IF NOT FOUND THEN 
-        INSERT INTO "Characters" ( firstname, lastname, description, race, class, "user_id", "game_id" ) VALUES ( new_firstname, new_lastname, new_description, new_race, new_class, new_user_id, new_game_id) RETURNING "Characters".id INTO new_id; -- on stock la valeur de l'id créer dans "new_id"
+        INSERT INTO "Characters" ( firstname, lastname, description, race, class, avatar, "user_id", "game_id" ) VALUES ( new_firstname, new_lastname, new_description, new_race, new_class, new_image, new_user_id, new_game_id) RETURNING "Characters".id INTO new_id; -- on stock la valeur de l'id créer dans "new_id"
     END IF;
     RETURN QUERY SELECT "Characters".id, "Characters".firstname, "Characters".lastname, "Characters".description, "Characters".race, "Characters".class, "Characters".is_alive, "Characters".created_at, "Characters".updated_at FROM "Characters" WHERE "Characters".id = new_id;
 END
