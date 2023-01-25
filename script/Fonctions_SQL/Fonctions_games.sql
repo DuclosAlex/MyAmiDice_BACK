@@ -34,23 +34,21 @@ CREATE OR REPLACE FUNCTION get_game_by_id_with_all(
     IN gameroom_id INT
 )
 RETURNS TABLE( "gameroom" json) AS $$
-DECLARE
-	mapid INT;
 
 BEGIN
 
 	RETURN QUERY SELECT row_to_json(Game) as "gameroom"
 	FROM (
-	SELECT *, (
-		SELECT map.id FROM "game_has_maps" WHERE "game_has_maps".game_id = 5
-		RETURNING * INTO mapid,
-		SELECT json_agg(row_to_json("Characters")) FROM "Characters" WHERE "Games".id = "Characters".game_id
+	SELECT "Games"."name", "Games"."description", "Games"."status", "Games"."notes", "Games".max_players, (
+		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT ch.firstname, ch.lastname, ch.description, ch.race, ch.class, ch.is_alive ) temptable))) FROM "Characters" as ch WHERE "Games".id = ch.game_id
 		) "characters", (
-		SELECT json_agg(row_to_json("Maps")) FROM "Maps" WHERE mapid = "Maps".id
-		) maps, (
-        SELECT json_agg(row_to_json("Users")) FROM "Users" WHERE "Users".id = "Games".user_id
-        ) "users"
-		FROM "Games" WHERE "Games".id = 5
-	) Game;
+		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT us.pseudo, us.id, us.avatar ) temptable))) FROM "Users" as us WHERE us.id = "Games".user_id
+        ) "users",
+		( SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT ma."name", ma."url" ) temptable))) FROM "Maps" as ma
+		JOIN game_has_maps as ghm on ghm.map_id = ma.id
+		JOIN "Games" as g ON g.id = ghm.game_id
+		WHERE g.id = 5) "maps"
+		FROM "Games" WHERE "Games".id = 5)
+	 Game;
 END;
 $$ LANGUAGE plpgsql;
