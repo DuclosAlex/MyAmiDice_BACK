@@ -20,30 +20,33 @@ $$ LANGUAGE plpgsql;
 
 -- Met le perso “:id” à jour ou Créer un nouveaux perso en base de données si il n'existe pas
 CREATE OR REPLACE FUNCTION create_or_update_characters_with_result(
-	IN new_id INT,
+	  IN new_id INT,
     IN new_firstname TEXT, 
     IN new_lastname TEXT, 
     IN new_description TEXT,
     IN new_race TEXT,
     IN new_class TEXT,
     IN new_is_alive BOOLEAN,
-    IN new_user_id INT
+    IN new_user_id INT,
+	  IN new_game_id INT,
+    IN new_image url DEFAULT NULL
 
 )
 RETURNS TABLE("id" INTEGER, firstname TEXT, lastname TEXT, "description" TEXT, race TEXT, "class" TEXT, is_alive BOOLEAN, "created_at" TIMESTAMPTZ, "updated_at" TIMESTAMPTZ) AS $$
 BEGIN
     -- En first on essai l'update 
-    UPDATE "Characters" SET firstname = new_firstname, lastname = new_lastname, "description" = new_description, race = new_race, is_alive= new_is_alive, "class" = new_class, "user_id" = new_id WHERE "new_id" = "Characters".id;
+    UPDATE "Characters" SET firstname = new_firstname, lastname = new_lastname, "description" = new_description, race = new_race, is_alive= new_is_alive, "class" = new_class, avatar = new_image WHERE "new_id" = "Characters".id;
     IF NOT FOUND THEN 
-        INSERT INTO "Characters" ( firstname, lastname, description, race, class, "user_id") VALUES ( new_firstname, new_lastname, new_description, new_race, new_class, new_user_id) RETURNING "Characters".id INTO new_id; -- on stock la valeur de l'id créer dans "new_id"
+        INSERT INTO "Characters" ( firstname, lastname, description, race, class, avatar, "user_id", "game_id" ) VALUES ( new_firstname, new_lastname, new_description, new_race, new_class, new_image, new_user_id, new_game_id) RETURNING "Characters".id INTO new_id; -- on stock la valeur de l'id créer dans "new_id"
     END IF;
     RETURN QUERY SELECT "Characters".id, "Characters".firstname, "Characters".lastname, "Characters".description, "Characters".race, "Characters".class, "Characters".is_alive, "Characters".created_at, "Characters".updated_at FROM "Characters" WHERE "Characters".id = new_id;
 END
 $$ LANGUAGE plpgsql;
+
+
 /*
  Test de fonction OK
-SELECT * from create_or_update_characters_with_result(
-	2, 'grobarg', 'trackmort', 'test', 'ORKS', 'brutal badass', TRUE) 
+SELECT * FROM create_or_update_characters_with_result(0, 'Vaqh', 'Omega', '1m95', 'Hybride vampire/loug-garou', 'Guerrier/mage', true, 1, 1)
 */
 
 

@@ -1,3 +1,4 @@
+-- SQLBook: Code
 -- Met le skill “:id” à jour ou Créer un nouveaux skill en base de données si il n'existe pas
 CREATE OR REPLACE FUNCTION create_or_update_skills_with_result(
 	IN new_id INT,

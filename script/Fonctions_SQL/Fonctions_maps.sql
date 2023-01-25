@@ -1,3 +1,4 @@
+-- SQLBook: Code
 --Créer ou update la map si elle existe en bdd
 CREATE OR REPLACE FUNCTION create_or_update_maps_with_result(
 	IN new_id INT,
@@ -16,7 +17,18 @@ BEGIN
     END IF;
     RETURN QUERY SELECT "Maps".id, "Maps".name, "Maps"."category", "Maps"."url", "Maps".created_at, "Maps".updated_at FROM "Maps" WHERE "Maps".id = new_id;
 END;
+
 $$ LANGUAGE plpgsql;
+
 /*
 Test à faire avec modif des tables
 */
+
+-- Supprime la maps “:id”
+CREATE OR REPLACE FUNCTION delete_maps_by_id(map_id INT)
+RETURNS VOID AS $$
+    DELETE FROM "Maps" WHERE "id" = map_id;
+$$ LANGUAGE SQL;
+-- Test de fonction OK
+SELECT delete_maps_by_id(1);
+

@@ -1,3 +1,4 @@
+-- SQLBook: Code
 -- Met l'item “:id” à jour ou Créer un nouvel item en base de données si il n'existe pas
 CREATE OR REPLACE FUNCTION create_or_update_items_with_result(
 	IN new_id INT,
