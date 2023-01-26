@@ -1,144 +1,105 @@
--- SQLBook: Code
---Récupére la gameroom, le mj, les joueurs, et tout le personnage avec ses possessions.
-CREATE OR REPLACE FUNCTION gameroom_by_id1(userid INT, gameid INT)
-RETURNS TABLE(
-	Games_name TEXT,
-	Games_notes TEXT,
-	Users_pseudo_mj TEXT,
-	Maps_name TEXT[],
-	Maps_url url[],
-	Characters_firstname TEXT,
-    Characters_lastname TEXT,
-    Characters_description TEXT,
-    Characters_race TEXT,
-    Characters_class TEXT,
-    Characters_is_alive BOOLEAN,
-    Skills_name TEXT[],
-    Skills_description TEXT[],
-    Characteristics_strength INT,
-    Characteristics_dexterity INT,
-    Characteristics_wisdom INT,
-    Characteristics_charisma INT,
-    Characteristics_constitution INT,
-    Characteristics_intelligence INT,
-    Characteristics_level INT,
-    Characteristics_hp INT,
-    Items_name TEXT[],
-    Items_quantity INT[],
-    Items_description TEXT[]
-) AS $$
+CREATE OR REPLACE FUNCTION get_game_by_id_with_all(
+	IN gameid INT,
+	IN userid INT
+)
+RETURNS TABLE("Gameroom" json) AS $$
 BEGIN
-	RETURN QUERY SELECT 
-	"Games"."name",
-	"Games"."notes",
-	"Users"."pseudo",
-	array_agg("Maps"."name"),
-	array_agg("Maps"."url"),
-	"Characters"."firstname",
-    "Characters"."lastname",
-    "Characters"."description",
-    "Characters"."race",
-    "Characters"."class",
-    "Characters"."is_alive",
-    array_agg("Skills"."name"),
-    array_agg("Skills"."description"),
-    "Characteristics"."strength",
-    "Characteristics"."dexterity",
-    "Characteristics"."wisdom",
-    "Characteristics"."charisma",
-    "Characteristics"."constitution",
-    "Characteristics"."intelligence",
-    "Characteristics"."level",
-    "Characteristics"."hp",
-    array_agg("Items"."name"),
-    array_agg("Items"."quantity"),
-    array_agg("Items"."description")
-	FROM "Games"
-	FULL JOIN "Users" ON "Games"."user_id" = "Users"."id"
-	FULL JOIN "game_has_maps" ON "Games"."id" = "game_has_maps"."game_id"
-	FULL JOIN "Maps" ON "game_has_maps"."map_id" = "Maps"."id"
-	FULL JOIN "Characters" ON "Characters"."game_id" = "Games"."id"
-	FULL JOIN "Characteristics" ON "Characters"."id" = "Characteristics"."character_id"
-	FULL JOIN "Skills" ON "Characters"."id" = "Skills"."character_id"
-	FULL JOIN "Items" ON "Characters"."id" = "Items"."character_id"
-	WHERE "Games"."id" = gameid
-	AND "Games"."user_id" = userid
-	GROUP BY 
-	"Games"."name",
-	"Games"."notes",
-	"Users"."pseudo",
-	"Characters"."firstname",
-    "Characters"."lastname",
-    "Characters"."description",
-    "Characters"."race",
-    "Characters"."class",
-    "Characters"."is_alive",
-    "Characteristics"."strength",
-    "Characteristics"."dexterity",
-    "Characteristics"."wisdom",
-    "Characteristics"."charisma",
-    "Characteristics"."constitution",
-    "Characteristics"."intelligence",
-    "Characteristics"."level",
-    "Characteristics"."hp";
-	IF NOT FOUND THEN  -- si la fonction n'et pas lancer par le Mj elle retourne uniquement le personnage du joueur au lieu de tout les persos
-		RETURN QUERY SELECT 
-		"Games"."name",
-		"Games"."notes",
-		"Users"."pseudo",
-		array_agg("Maps"."name"),
-		array_agg("Maps"."url"),
-		"Characters"."firstname",
-		"Characters"."lastname",
-		"Characters"."description",
-		"Characters"."race",
-		"Characters"."class",
-		"Characters"."is_alive",
-		array_agg("Skills"."name"),
-		array_agg("Skills"."description"),
-		"Characteristics"."strength",
-		"Characteristics"."dexterity",
-		"Characteristics"."wisdom",
-		"Characteristics"."charisma",
-		"Characteristics"."constitution",
-		"Characteristics"."intelligence",
-		"Characteristics"."level",
-		"Characteristics"."hp",
-		array_agg("Items"."name"),
-		array_agg("Items"."quantity"),
-		array_agg("Items"."description") 
+	RETURN QUERY SELECT row_to_json("gameroom") as "Gameroom"
+	FROM (
+		SELECT "Games".name, "Games".notes, 
+		(
+			SELECT jsonb_agg(Maps)
+			FROM(	
+				SELECT "Maps".url, "Maps".name, "Maps".category
+				FROM "Maps" FULL JOIN "game_has_maps" ON "Maps".id = "game_has_maps".map_id
+				WHERE "Games".id = "game_has_maps".game_id
+			) AS Maps
+		) AS Maps,
+		(
+			SELECT jsonb_agg(personnages)
+			FROM(
+				SELECT "Characters".race, "Characters".class, "Characters".avatar, "Characters".lastname, "Characters".firstname, "Characters".description, 
+				(
+					SELECT json_agg(Skills)
+					FROM(
+						SELECT "Skills".name, "Skills".description
+						FROM "Skills"
+						WHERE "Skills".character_id = "Characters".id
+					) AS Skills
+				) AS Skills,
+				(
+					SELECT json_agg(objets)
+					FROM(
+						SELECT "Items".name, "Items".description, "Items".quantity
+						FROM "Items"
+						WHERE "Items".character_id = "Characters".id
+					) AS objets
+				) AS objets,
+				(
+					SELECT json_agg(Stats)
+					FROM(
+						SELECT "Characteristics".strength, "Characteristics".dexterity, "Characteristics".wisdom, "Characteristics".charisma, "Characteristics".constitution, "Characteristics".intelligence, "Characteristics".level, "Characteristics".max_hp, "Characteristics".current_hp, "Characteristics".max_mana, "Characteristics".current_mana
+						FROM "Characteristics"
+						WHERE "Characteristics".character_id = "Characters".id
+					) AS Stats
+				) AS Stats
+				FROM "Characters" FULL JOIN "Users" ON "Users".id = "Characters".user_id
+				WHERE "Characters".user_id = "Users".id
+			)AS Personnages
+		) AS Personnages
 		FROM "Games"
-		FULL JOIN "Users" ON "Games"."user_id" = "Users"."id"
-		FULL JOIN "game_has_maps" ON "Games"."id" = "game_has_maps"."game_id"
-		FULL JOIN "Maps" ON "game_has_maps"."map_id" = "Maps"."id"
-		FULL JOIN "Characters" ON "Characters"."game_id" = "Games"."id"
-		FULL JOIN "Characteristics" ON "Characters"."id" = "Characteristics"."character_id"
-		FULL JOIN "Skills" ON "Characters"."id" = "Skills"."character_id"
-		FULL JOIN "Items" ON "Characters"."id" = "Items"."character_id"
-		WHERE "Games"."id" = gameid
-		AND "Characters".user_id = userid
-		GROUP BY 
-		"Games"."name",
-		"Games"."notes",
-		"Users"."pseudo",
-		"Characters"."firstname",
-		"Characters"."lastname",
-		"Characters"."description",
-		"Characters"."race",
-		"Characters"."class",
-		"Characters"."is_alive",
-		"Characteristics"."strength",
-		"Characteristics"."dexterity",
-		"Characteristics"."wisdom",
-		"Characteristics"."charisma",
-		"Characteristics"."constitution",
-		"Characteristics"."intelligence",
-		"Characteristics"."level",
-		"Characteristics"."hp";
+		WHERE "Games".user_id = userid
+		AND "Games".id = gameid
+	) AS "gameroom";
+	
+	IF NOT FOUND THEN
+	RETURN QUERY SELECT row_to_json("gameroom") as "Gameroom"
+	FROM (
+		SELECT "Games".name, "Games".notes, 
+		(
+			SELECT jsonb_agg(Maps)
+			FROM(	
+				SELECT "Maps".url, "Maps".name, "Maps".category
+				FROM "Maps" FULL JOIN "game_has_maps" ON "Maps".id = "game_has_maps".map_id
+				WHERE "Games".id = "game_has_maps".game_id
+			) AS Maps
+		) AS Maps,
+		(
+			SELECT jsonb_agg(personnages)
+			FROM(
+				SELECT "Characters".race, "Characters".class, "Characters".avatar, "Characters".lastname, "Characters".firstname, "Characters".description, 
+				(
+					SELECT json_agg(Skills)
+					FROM(
+						SELECT "Skills".name, "Skills".description
+						FROM "Skills"
+						WHERE "Skills".character_id = "Characters".id
+					) AS Skills
+				) AS Skills,
+				(
+					SELECT json_agg(objets)
+					FROM(
+						SELECT "Items".name, "Items".description, "Items".quantity
+						FROM "Items"
+						WHERE "Items".character_id = "Characters".id
+					) AS objets
+				) AS objets,
+				(
+					SELECT json_agg(Stats)
+					FROM(
+						SELECT "Characteristics".strength, "Characteristics".dexterity, "Characteristics".wisdom, "Characteristics".charisma, "Characteristics".constitution, "Characteristics".intelligence, "Characteristics".level, "Characteristics".max_hp, "Characteristics".current_hp, "Characteristics".max_mana, "Characteristics".current_mana
+						FROM "Characteristics"
+						WHERE "Characteristics".character_id = "Characters".id
+					) AS Stats
+				) AS Stats
+				FROM "Characters" FULL JOIN "Users" ON "Users".id = "Characters".user_id
+				WHERE "Characters".user_id = "Users".id
+				AND "Characters".user_id = userid
+			)AS Personnages
+		) AS Personnages
+		FROM "Games"
+		WHERE "Games".id = gameid
+	) AS "gameroom";
 	END IF;
 END;
 $$ LANGUAGE plpgsql;
-/*
-SELECT * FROM gameroom_by_id(2, 1)
-SELECT * FROM gameroom_by_id(4, 1)
-*/
