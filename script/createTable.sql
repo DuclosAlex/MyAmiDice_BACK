@@ -1,7 +1,7 @@
 -- SQLBook: Code
 BEGIN;
 
-DROP TABLE IF EXISTS "Content",
+DROP TABLE IF EXISTS "game_has_maps",
 "Invite",
 "Maps",
 "News",
