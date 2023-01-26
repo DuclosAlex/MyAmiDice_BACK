@@ -20,7 +20,7 @@ $$ LANGUAGE plpgsql;
 
 -- Met le perso “:id” à jour ou Créer un nouveaux perso en base de données si il n'existe pas
 CREATE OR REPLACE FUNCTION create_or_update_characters_with_result(
-	  IN new_id INT,
+	IN new_id INT,
     IN new_firstname TEXT, 
     IN new_lastname TEXT, 
     IN new_description TEXT,
@@ -28,7 +28,7 @@ CREATE OR REPLACE FUNCTION create_or_update_characters_with_result(
     IN new_class TEXT,
     IN new_is_alive BOOLEAN,
     IN new_user_id INT,
-	  IN new_game_id INT,
+	IN new_game_id INT,
     IN new_image url DEFAULT NULL
 
 )

@@ -1,7 +1,7 @@
 -- SQLBook: Code
 BEGIN;
 
-DROP TABLE IF EXISTS "Content",
+DROP TABLE IF EXISTS "game_has_maps",
 "Invite",
 "Maps",
 "News",
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS "Games" (
     "name" TEXT NOT NULL UNIQUE,
     "max_players" INT NOT NULL,
     "notes" TEXT,
-    "status" TEXT NOT NULL,
+    "status" TEXT NOT NULL DEFAULT 'start',
     "description" TEXT NOT NULL,
     "user_id" INT REFERENCES "Users"("id") ON DELETE CASCADE,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP, -- on peut également utiliser NOW()

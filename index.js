@@ -21,7 +21,7 @@ app.use('/items', itemRouter);
 app.use('/skills', skillRouter);
 app.use('/maps', mapRouter);
 app.use('/invites', inviteRouter);
-app.use('/characteristics', characteristicRouter)
+app.use('/characteristics', characteristicRouter);
 
 const port = process.env.PORT || 3000;
 

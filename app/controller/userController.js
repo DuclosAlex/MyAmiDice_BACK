@@ -21,6 +21,14 @@ const userController = {
         const result = await userModel.updateUser(user);
 
         res.json(result);
+    },
+
+    async logUser ( req, res) {
+
+        const user = req.body;
+        const result = await userModel.loginUser(user);
+
+        res.json(result);
     }
 
 }
