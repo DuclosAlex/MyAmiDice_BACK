@@ -15,6 +15,8 @@ const characterController = {
 
     async createCharacterWithCaracteristics ( req, res) {
 
+        const fullCharacters = [];
+
         const createCharacter = await characterModel.createOrUpdate(req.body.characters);
 
         const characteristics = req.body.characteristics;
@@ -22,6 +24,11 @@ const characterController = {
         characteristics.unshift(createCharacter.id);
 
         const createCharacteristics = await characteristicModel.createOrUpdate(characteristics);
+
+        fullCharacters.push(createCharacter);
+        fullCharacters.push(createCharacteristics);
+
+        res.json(fullCharacters);
         
     }
 }
