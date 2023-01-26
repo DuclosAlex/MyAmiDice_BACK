@@ -53,8 +53,12 @@ BEGIN
 	RETURN QUERY SELECT row_to_json(Game) as "gameroom"
 	FROM (
 	SELECT "Games"."name", "Games"."description", "Games"."status", "Games"."notes", "Games".max_players, (
-		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT ch.firstname, ch.lastname, ch.description, ch.race, ch.class, ch.is_alive, charac.strength ) temptable))) FROM "Characters" as ch
-		JOIN "Characteristics" as charac ON ch.id = charac.character_id
+		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT ch.id, ch.firstname, ch.lastname, ch.description, ch.race, ch.class, ch.is_alive, charac.strength ) temptable))) FROM "Characters" as ch
+		lEFT JOIN "Characteristics" as charac ON ch.id = charac.character_id, (
+			SELECT json_agg(row_to_json((SELECT temptable FROM ( SELECT it.name, it.description) temptable ))) FROM "Items" as it
+			LEFT JOIN "Items" ON "Characters".id = "Items".character_id
+			WHERE it.character_id = "Characters".id ) "items"
+			
 		WHERE ch.game_id = gameroom_id) "characters", (
 		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT ma."name", ma."url" ) temptable))) FROM "Maps" as ma
 		JOIN game_has_maps as ghm on ghm.map_id = ma.id
@@ -63,6 +67,7 @@ BEGIN
 		FROM "Games" WHERE "Games".id = gameroom_id)
 	Game;
 END;
+
 $$ LANGUAGE plpgsql;
 
 
