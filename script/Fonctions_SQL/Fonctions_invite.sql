@@ -1,4 +1,3 @@
--- SQLBook: Code
 -- Met l'invite “:id” à jour ou Créer une nouvelle invite en base de données si il n'existe pas
 CREATE OR REPLACE FUNCTION create_or_update_invite_with_result(
 	IN new_id INT,
@@ -19,10 +18,12 @@ BEGIN
     RETURN QUERY SELECT "Invite".id, "Invite".game_id, "Invite"."user_id", "Invite"."status", "Invite".created_at, "Invite".updated_at FROM "Invite" WHERE "Invite".id = new_id;
 END;
 $$ LANGUAGE plpgsql;
+
 /*
-Test de la fonction OK: 
-SELECT * from create_or_update_invite_with_result(
-	2, 'nop !', 14, 2, 'elfedelamort@truc.game') 
+Script de test de la fonction:
+
+SELECT * from create_or_update_invite_with_result(2, 'nop !', 14, 'Guillame') 
+
 */
 
 
@@ -35,4 +36,5 @@ Script de TEST de la fonction:
 
 SELECT delete_invite_by_id(1);
 SELECT * FROM "Invite";
+
 */
