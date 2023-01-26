@@ -29,6 +29,7 @@ CREATE OR REPLACE FUNCTION delete_maps_by_id(map_id INT)
 RETURNS VOID AS $$
     DELETE FROM "Maps" WHERE "id" = map_id;
 $$ LANGUAGE SQL;
+
 -- Test de fonction OK
 SELECT delete_maps_by_id(1);
 
