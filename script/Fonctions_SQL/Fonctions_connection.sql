@@ -1,14 +1,38 @@
+  -- version fonctionnelle de la user_login ADD
+
 CREATE OR REPLACE FUNCTION user_login(IN test_email email, IN test_password TEXT)
-RETURNS TABLE("login" json) AS $$
-BEGIN
-  RETURN QUERY SELECT row_to_json("log") as "login"
-  FROM (
-    SELECT "Users".id, "Users".email, "Users".is_admin, "Users".firstname, "Users".lastname, "Users".pseudo,
-    (SELECT json_agg(row_to_json( (SELECT temptable FROM (SELECT "name", "status", "description", "max_players") temptable ))) FROM "Games" WHERE "Users".id = "Games".user_id ) "games",
-    (SELECT json_agg(row_to_json( (SELECT temptable FROM (SELECT "firstname", lastname) temptable ))) FROM "Characters" WHERE "Users".id = "Characters".user_id ) "characters",
-    (SELECT json_agg(row_to_json( (SELECT temptable FROM (SELECT game_id, user_id) temptable ))) FROM "Invite" WHERE "Users".id = "Invite".user_id) "invite"
-    FROM "Users"
-    WHERE "Users".email = test_email AND "Users".password = test_password
-  ) "log";
+RETURNS TABLE("user_log" json) AS $$
+  BEGIN
+RETURN QUERY SELECT row_to_json(Joueurs) as "user_log"
+FROM (
+	SELECT "Users".id, "Users".email, "Users".is_admin, "Users".firstname, "Users".lastname, "Users".pseudo,  (
+		SELECT jsonb_agg(personnages)
+		FROM(
+			SELECT "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters"."class", 
+			(
+				SELECT json_agg(Games)
+				FROM (
+					SELECT "Games"."name", "Games"."id", "Games"."description"
+					FROM "Games"
+					WHERE "Games".id = "Characters".game_id
+				) AS games
+			)as games
+			FROM "Characters"
+			WHERE "Characters".user_id = "Users".id
+		)AS Personnages
+	) AS Personnages,
+	(
+		SELECT json_agg(Games_MJ)
+		FROM (
+			SELECT "Games"."name", "Games".id, "Games"."description"
+			FROM "Games"
+			WHERE "Games"."user_id" = "Users".id
+		) as Games_MJ
+	) as Games_MJ
+	FROM "Users"
+	WHERE "Users".id = 11
+) AS Joueurs;
+
 END;
+
 $$ LANGUAGE plpgsql;
