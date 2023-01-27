@@ -42,14 +42,15 @@ SELECT * from update_users_with_result(
 --Crer un utilisateur en bdd
 CREATE OR REPLACE FUNCTION create_users_with_result(
     IN new_pseudo TEXT, 
-    IN new_avatar url,
     IN new_email email,
     IN new_password TEXT,
+    IN new_firstname TEXT,
+    IN new_lastname TEXT,
 	IN new_id INT DEFAULT -1
 )
-RETURNS TABLE("id" INTEGER, pseudo TEXT, avatar url, email email, is_admin BOOLEAN, firstname TEXT, lastname TEXT) AS $$
+RETURNS TABLE("id" INTEGER, pseudo TEXT, email email, is_admin BOOLEAN, firstname TEXT, lastname TEXT) AS $$
 BEGIN
-    INSERT INTO "Users" ( pseudo, avatar, email, "password", is_admin) VALUES ( new_pseudo, new_avatar, new_email, new_password, false ) RETURNING "Users".id INTO new_id ;
+    INSERT INTO "Users" ( pseudo, email, "password", firstname, lastname) VALUES ( new_pseudo, new_email, new_password, new_firstname, new_lastname ) RETURNING "Users".id INTO new_id ;
     RETURN QUERY SELECT "Users".id,"Users".pseudo, "Users".avatar, "Users".email, "Users".is_admin, "Users".firstname, "Users".lastname FROM "Users" WHERE "Users".id = new_id;
 END
 $$ LANGUAGE plpgsql;
