@@ -6,6 +6,6 @@ const router = express.Router();
 router.get('', inviteController.basicQuery.getAll);
 // router.get('/:id', inviteController.basicQuery.getById);
 router.delete( '/:id', inviteController.basicQuery.deleteById);
-router.post('/:id', inviteController.basicQuery.createOrUpdate );
+router.post('', inviteController.basicQuery.createOrUpdate );
 
 module.exports = router;
