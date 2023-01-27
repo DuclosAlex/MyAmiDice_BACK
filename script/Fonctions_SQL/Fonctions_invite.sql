@@ -27,9 +27,9 @@ SELECT * from create_or_update_invite_with_result(2, 'nop !', 14, 'Guillame')
 */
 
 
-CREATE OR REPLACE FUNCTION delete_invite_by_id(IN gameid INT)
+CREATE OR REPLACE FUNCTION delete_invite_by_id(IN invite_id INT)
 RETURNS VOID AS $$
-    DELETE FROM "Invite" WHERE "game_id" = gameid;
+    DELETE FROM "Invite" WHERE "Invite".id = invite_id;
 $$ LANGUAGE SQL;
 /*
 Script de TEST de la fonction:
