@@ -3,25 +3,25 @@
 CREATE OR REPLACE FUNCTION user_login(IN test_email email, IN test_password TEXT)
 RETURNS TABLE("user_log" json) AS $$
  
-  BEGIN
+BEGIN
 RETURN QUERY SELECT row_to_json(Joueurs) as "user_log"
 FROM (
 	SELECT us.id, us.email, us.is_admin, us.firstname, us.lastname, us.pseudo,  (
 		SELECT jsonb_agg(personnages)
 		FROM(
-			SELECT "Characters".id, "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters"."class", gm."name", gm."description", gm.max_players, us.pseudo
+			SELECT "Characters".id, "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters"."class", gm."name", gm."description", gm.max_players, umj.pseudo
 			FROM "Characters"
 			JOIN "Games" as gm ON "Characters".game_id = gm.id
-			JOIN "Users" as us ON gm.user_id = us.id
+			JOIN "Users" as umj ON gm.user_id = umj.id
 			WHERE "Characters".user_id = us.id
 		)AS Personnages
 	) AS Personnages,
 	(
 		SELECT json_agg(Games_MJ)
 		FROM (
-			SELECT "Games"."name", "Games".id, "Games"."status", "Games"."description", "Games"."max_players"
-			FROM "Games"
-			WHERE "Games"."user_id" = us.id
+			SELECT gmj."name", gmj.id, gmj."status", gmj."description", gmj."max_players"
+			FROM "Games" as gmj
+			WHERE gmj.user_id = us.id 
 		) as Games_MJ
 	) as Games_MJ,
 	(
@@ -30,7 +30,7 @@ FROM (
 			SELECT gi."name", gi."id",gi."description", uj."pseudo"
 			FROM "Invite"
 			LEFT JOIN "Games" as gi ON "Invite".game_id = gi.id
-			LEFT JOIN "Users" as uj ON "Games".user_id = uj."pseudo"
+			LEFT JOIN "Users" as uj ON gi.user_id = uj.id
 			WHERE "Invite".user_id = us.id
 		) as Games_Invite
 	) as Games_Invite
