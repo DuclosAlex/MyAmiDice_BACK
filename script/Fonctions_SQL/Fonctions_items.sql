@@ -17,9 +17,10 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 /*
-Test de la fonction ok
-SELECT * from create_or_update_items_with_result(
-	0, 'pain elfique', 2, 'rations pour taffioles !', 1)
+Script test de la fonction:
+
+SELECT * from create_or_update_items_with_result(0, 'pain elfique', 2, 'rations pour taffioles !', 1)
+
 */
 
 
@@ -32,4 +33,5 @@ Script de TEST de la fonction:
 
 SELECT delete_items_by_id(1);
 SELECT * FROM "Items";
+
 */

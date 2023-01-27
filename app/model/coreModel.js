@@ -53,9 +53,6 @@ const coreModel = {
         return result.rows[0];
     }
 
-
-    
-
 }
 
 module.exports = coreModel;
