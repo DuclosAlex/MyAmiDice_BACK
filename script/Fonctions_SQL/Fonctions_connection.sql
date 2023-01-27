@@ -3,31 +3,32 @@
 CREATE OR REPLACE FUNCTION user_login(IN test_email email, IN test_password TEXT)
 RETURNS TABLE("user_log" json) AS $$
  
+ 
 BEGIN
 RETURN QUERY SELECT row_to_json(Joueurs) as "user_log"
 FROM (
 	SELECT us.id, us.email, us.is_admin, us.firstname, us.lastname, us.pseudo,  (
-		SELECT jsonb_agg(personnages)
+		SELECT jsonb_agg(characters)
 		FROM(
-			SELECT "Characters".id, "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters"."class", gm."name", gm."description", gm.max_players, gm.id, umj.pseudo
+			SELECT "Characters".id, "Characters"."firstname", "Characters"."lastname"
 			FROM "Characters"
-			JOIN "Games" as gm ON "Characters".game_id = gm.id
-			JOIN "Users" as umj ON gm.user_id = umj.id
 			WHERE "Characters".user_id = us.id
-		)AS Personnages
-	) AS Personnages,
+		)AS characters
+	) AS characters,
 	(
-		SELECT json_agg(Games_MJ)
+		SELECT json_agg(Games)
 		FROM (
-			SELECT gmj."name", gmj.id, gmj."status", gmj."description", gmj."max_players"
+			SELECT gmj."name", gmj.id, gmj."status", gmj."description", gmj."max_players", gmj.user_id, umj."pseudo"
 			FROM "Games" as gmj
-			WHERE gmj.user_id = us.id 
-		) as Games_MJ
-	) as Games_MJ,
+			JOIN "Characters" as cha ON cha.user_id = us.id
+			JOIN "Users" as umj ON umj.id = gmj.user_id
+			WHERE gmj.user_id = us.id OR gmj.id = cha.game_id
+		) as Games
+	) as Games,
 	(
 		SELECT json_agg(Games_Invite)
 		FROM (
-			SELECT gi."name", gi."id",gi."description", uj."pseudo"
+			SELECT gi."name", "Invite"."id",gi."description", uj."pseudo", "Invite".game_id
 			FROM "Invite"
 			LEFT JOIN "Games" as gi ON "Invite".game_id = gi.id
 			LEFT JOIN "Users" as uj ON gi.user_id = uj.id
@@ -41,60 +42,6 @@ FROM (
 END;
 
 $$ LANGUAGE plpgsql;
-
-/*
-Script de test de la fonction:
-
-SELECT * FROM user_login('elfedelamort@truc.game', 'lolo-forever');
-*/
-SELECT row_to_json(Gameroom)
-FROM (
-    SELECT "Users".pseudo, 
-	(
-		SELECT jsonb_agg(game_info)
-		FROM(
-			SELECT "Games".* ,
-			(
-				SELECT json_agg(Maps)
-				FROM(
-					SELECT "Maps".*
-					FROM "Maps" FULL JOIN "game_has_maps" ON "Maps".id = "game_has_maps".map_id
-					WHERE "Games".id = "game_has_maps".game_id
-				) AS Maps
-			) AS Maps
-			FROM "Games"
-			WHERE "Games".id = 1 
-		) AS game_info
-	) AS game_info, 
-	(
-        SELECT jsonb_agg(personnages)
-        FROM(
-            SELECT "Characters".*, 
-            (
-                SELECT json_agg(Skills)
-                FROM(
-                    SELECT "Skills".*
-                    FROM "Skills"
-                    WHERE "Skills".character_id = "Characters".id
-                ) AS Skills
-            ) AS Skills,
-            (
-                SELECT json_agg(objets)
-                FROM(
-                    SELECT "Items".*
-                    FROM "Items"
-                    WHERE "Items".character_id = "Characters".id
-                ) AS objets
-            ) AS objets
-            FROM "Characters"
-            WHERE "Characters".user_id = "Users".id
-        )AS Personnages
-    ) AS Personnages
-	
-    FROM "Users"
-    WHERE "Users".id = 2
-) AS Gameroom;
-
 
 
 
