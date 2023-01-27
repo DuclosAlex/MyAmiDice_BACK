@@ -9,7 +9,7 @@ FROM (
 	SELECT us.id, us.email, us.is_admin, us.firstname, us.lastname, us.pseudo,  (
 		SELECT jsonb_agg(personnages)
 		FROM(
-			SELECT "Characters".id, "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters"."class", gm."name", gm."description", gm.max_players, umj.pseudo
+			SELECT "Characters".id, "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters"."class", gm."name", gm."description", gm.max_players, gm.id, umj.pseudo
 			FROM "Characters"
 			JOIN "Games" as gm ON "Characters".game_id = gm.id
 			JOIN "Users" as umj ON gm.user_id = umj.id
