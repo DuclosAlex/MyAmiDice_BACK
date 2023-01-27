@@ -21,8 +21,8 @@ $$ LANGUAGE SQL;
 CREATE OR REPLACE FUNCTION update_users_with_result(
 	IN new_id INT,
     IN new_pseudo TEXT, 
-    IN new_avatar url,
     IN new_email email,
+    IN new_avatar url DEFAULT NULL,
     IN new_firstname TEXT DEFAULT NULL, 
     IN new_lastname TEXT DEFAULT NULL
 )

@@ -2,35 +2,40 @@
 -- Appele quand le users se connect et recupere ses info
 CREATE OR REPLACE FUNCTION user_login(IN test_email email, IN test_password TEXT)
 RETURNS TABLE("user_log" json) AS $$
+ 
   BEGIN
 RETURN QUERY SELECT row_to_json(Joueurs) as "user_log"
 FROM (
-	SELECT "Users".id, "Users".email, "Users".is_admin, "Users".firstname, "Users".lastname, "Users".pseudo,  (
+	SELECT us.id, us.email, us.is_admin, us.firstname, us.lastname, us.pseudo,  (
 		SELECT jsonb_agg(personnages)
 		FROM(
-			SELECT "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters"."class", 
-			(
-				SELECT json_agg(Games)
-				FROM (
-					SELECT "Games"."name", "Games"."id", "Games"."description"
-					FROM "Games"
-					WHERE "Games".id = "Characters".game_id
-				) AS games
-			)as games
+			SELECT "Characters".id, "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters"."class", gm."name", gm."description", gm.max_players, us.pseudo
 			FROM "Characters"
-			WHERE "Characters".user_id = "Users".id
+			JOIN "Games" as gm ON "Characters".game_id = gm.id
+			JOIN "Users" as us ON gm.user_id = us.id
+			WHERE "Characters".user_id = us.id
 		)AS Personnages
 	) AS Personnages,
 	(
 		SELECT json_agg(Games_MJ)
 		FROM (
-			SELECT "Games"."name", "Games".id, "Games"."description"
+			SELECT "Games"."name", "Games".id, "Games"."status", "Games"."description", "Games"."max_players"
 			FROM "Games"
-			WHERE "Games"."user_id" = "Users".id
+			WHERE "Games"."user_id" = us.id
 		) as Games_MJ
-	) as Games_MJ
-	FROM "Users"
-	WHERE "Users".id = 11
+	) as Games_MJ,
+	(
+		SELECT json_agg(Games_Invite)
+		FROM (
+			SELECT gi."name", gi."id",gi."description", uj."pseudo"
+			FROM "Invite"
+			LEFT JOIN "Games" as gi ON "Invite".game_id = gi.id
+			LEFT JOIN "Users" as uj ON "Games".user_id = uj."pseudo"
+			WHERE "Invite".user_id = us.id
+		) as Games_Invite
+	) as Games_Invite
+	FROM "Users" as us
+	WHERE us."email" = test_email AND us."password" = test_password
 ) AS Joueurs;
 
 END;
@@ -89,4 +94,7 @@ FROM (
     FROM "Users"
     WHERE "Users".id = 2
 ) AS Gameroom;
+
+
+
 
