@@ -11,9 +11,9 @@ const userModel = {
 
         try {
 
-            const sqlQuery = ` SELECT * FROM create_users_with_result($1, $2, $3) `;
+            const sqlQuery = ` SELECT * FROM create_users_with_result($1, $2, $3, $4, $5) `;
 
-            const values = [ user.pseudo, user.email, user.password];
+            const values = [ user.pseudo, user.email, user.password, user.firstname, user.lastname];
             const result = await db.query(sqlQuery, values);
             createUser = result.rows[0];
         } catch(e) {
