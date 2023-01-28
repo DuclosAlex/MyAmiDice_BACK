@@ -6,7 +6,7 @@ const gameModel = {
 
     ...coreModel,
 
-    async getGameByIdWithAll ( id) {
+    async getGameByIdWithAll (id) {
 
         let gameWithAll;
 
