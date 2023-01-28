@@ -1,7 +1,8 @@
+
 -- SQLBook: Code
 -- Renvoi la liste de tout les utilisateurs
 CREATE OR REPLACE FUNCTION get_users() 
-RETURNS TABLE("id" INTEGER, "pseudo" TEXT, "avatar" url, "password" TEXT, "email" TEXT, "is_admin" BOOLEAN, "lastname" TEXT, "firstname" TEXT,"avatar" url, "created_at" TIMESTAMPTZ, "updated_at" TIMESTAMPTZ) AS $$
+RETURNS TABLE("id" INTEGER, "pseudo" TEXT, "password" TEXT, "email" TEXT, "is_admin" BOOLEAN, "lastname" TEXT, "firstname" TEXT, "created_at" TIMESTAMPTZ, "updated_at" TIMESTAMPTZ) AS $$
     SELECT * FROM "Users";
 $$ LANGUAGE SQL;
 -- Test de fonction OK
