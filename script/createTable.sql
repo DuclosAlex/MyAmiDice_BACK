@@ -9,7 +9,8 @@ DROP TABLE IF EXISTS "game_has_maps",
 "Items",
 "Characters",
 "Games",
-"Users";
+"Users" CASCADE;
+
 
 DROP DOMAIN IF EXISTS "email", "url";
 
