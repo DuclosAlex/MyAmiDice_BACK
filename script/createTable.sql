@@ -1,6 +1,6 @@
 BEGIN;
 
-DROP TABLE IF EXISTS "game_has_maps",
+DROP CASCADE TABLE IF EXISTS "game_has_maps",
 "Invite",
 "Maps",
 "News",
