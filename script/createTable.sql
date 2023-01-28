@@ -9,7 +9,8 @@ DROP TABLE IF EXISTS "game_has_maps",
 "Items",
 "Characters",
 "Games",
-"Users";
+"Users" CASCADE;
+
 
 DROP DOMAIN IF EXISTS "email", "url";
 
@@ -30,7 +31,6 @@ CREATE TABLE IF NOT EXISTS "Users" (
     "is_admin" BOOLEAN NOT NULL DEFAULT FALSE,
     "lastname" TEXT,
     "firstname" TEXT,
-    "avatar" "url" DEFAULT NULL,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP, -- on peut également utiliser NOW()
     "updated_at" TIMESTAMPTZ
 );

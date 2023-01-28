@@ -23,11 +23,10 @@ CREATE OR REPLACE FUNCTION update_users_with_result(
 	IN new_id INT,
     IN new_pseudo TEXT, 
     IN new_email email,
-    IN new_avatar url DEFAULT NULL,
     IN new_firstname TEXT DEFAULT NULL, 
     IN new_lastname TEXT DEFAULT NULL
 )
-RETURNS TABLE("id" INTEGER, pseudo TEXT, avatar url, email email, is_admin BOOLEAN, firstname TEXT, lastname TEXT) AS $$
+RETURNS TABLE("id" INTEGER, pseudo TEXT, email email, is_admin BOOLEAN, firstname TEXT, lastname TEXT) AS $$
 BEGIN
     -- En first on essai l'update 
     UPDATE "Users" SET pseudo = new_pseudo, avatar = new_image, email = new_email, firstname = new_firstname, lastname = new_lastname, updated_at = now() WHERE "new_id" = "Users".id;
@@ -45,14 +44,14 @@ CREATE OR REPLACE FUNCTION create_users_with_result(
     IN new_pseudo TEXT, 
     IN new_email email,
     IN new_password TEXT,
-    IN new_firstname TEXT,
-    IN new_lastname TEXT,
-	IN new_id INT DEFAULT -1
+    IN new_id INT DEFAULT -1,
+    IN new_firstname TEXT DEFAULT NULL,
+    IN new_latsname TEXT DEFAULT NULL
 )
-RETURNS TABLE("id" INTEGER, pseudo TEXT, email email, is_admin BOOLEAN, firstname TEXT, lastname TEXT) AS $$
+RETURNS TABLE("id" INTEGER, pseudo TEXT, email email, is_admin BOOLEAN, firstname TEXT, lastname TEXT ) AS $$
 BEGIN
-    INSERT INTO "Users" ( pseudo, email, "password", firstname, lastname) VALUES ( new_pseudo, new_email, new_password, new_firstname, new_lastname ) RETURNING "Users".id INTO new_id ;
-    RETURN QUERY SELECT "Users".id,"Users".pseudo, "Users".avatar, "Users".email, "Users".is_admin, "Users".firstname, "Users".lastname FROM "Users" WHERE "Users".id = new_id;
+    INSERT INTO "Users" ( pseudo, email, "password", is_admin, firstname, lastname) VALUES ( new_pseudo, new_email, new_password, false, new_firstname, new_lastname ) RETURNING "Users".id INTO new_id ;
+    RETURN QUERY SELECT "Users".id,"Users".pseudo, "Users".email, "Users".is_admin, "Users".firstname, "Users".lastname FROM "Users" WHERE "Users".id = new_id;
 END
 $$ LANGUAGE plpgsql;
 

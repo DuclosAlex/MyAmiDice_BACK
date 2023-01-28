@@ -1,5 +1,32 @@
 -- SCRIPT DE SEEDING DES FONCTIONS DE LA BDD.
 BEGIN;
+DROP FUNCTION IF EXISTS create_or_update_characteristics_with_result(),
+get_character_by_id_with_all(),
+create_or_update_characters_with_result(),
+delete_characters_by_id(),
+user_login(),
+get_games(),
+create_or_update_games_with_result(),
+get_game_by_id_with_all(),
+delete_games_by_id(),
+create_or_update_invite_with_result(),
+delete_invite_by_id(),
+create_or_update_items_with_result(),
+delete_items_by_id(),
+create_or_update_maps_with_result(),
+delete_maps_by_id(),
+create_or_update_news_with_result(),
+delete_news_by_id(),
+get_news(),
+create_or_update_skills_with_result(),
+delete_skills_by_id(),
+get_users(),
+update_users_with_result(),
+delete_users_by_id(),
+create_users_with_result();
+commit;
+Begin;
+
 --Met à jour les stats(Characteristics) d'un personnage "id" en bdd
 CREATE OR REPLACE FUNCTION create_or_update_characteristics_with_result(
     IN new_id INT,
@@ -282,12 +309,12 @@ SELECT * from create_or_update_invite_with_result(
 	2, 'nop !', 14, 2, 'elfedelamort@truc.game') 
 */
 
-
+/* A tester d'urgence !
 CREATE OR REPLACE FUNCTION delete_invite_by_id(IN gameid INT)
 RETURNS VOID AS $$
     DELETE FROM "Invite" WHERE "game_id" = gameid;
 $$ LANGUAGE SQL;
-/*
+
 Script de TEST de la fonction:
 
 SELECT delete_invite_by_id(1);
@@ -440,7 +467,7 @@ SELECT * FROM "Skills";
 -- SQLBook: Code
 -- Renvoi la liste de tout les utilisateurs
 CREATE OR REPLACE FUNCTION get_users() 
-RETURNS TABLE("id" INTEGER, "pseudo" TEXT, "avatar" url, "password" TEXT, "email" TEXT, "is_admin" BOOLEAN, "lastname" TEXT, "firstname" TEXT, "created_at" TIMESTAMPTZ, "updated_at" TIMESTAMPTZ) AS $$
+RETURNS TABLE("id" INTEGER, "pseudo" TEXT, "password" TEXT, "email" TEXT, "is_admin" BOOLEAN, "lastname" TEXT, "firstname" TEXT, "created_at" TIMESTAMPTZ, "updated_at" TIMESTAMPTZ) AS $$
     SELECT * FROM "Users";
 $$ LANGUAGE SQL;
 -- Test de fonction OK
@@ -459,15 +486,14 @@ $$ LANGUAGE SQL;
 CREATE OR REPLACE FUNCTION update_users_with_result(
 	IN new_id INT,
     IN new_pseudo TEXT, 
-    IN new_email email,
-    IN new_image url, 
+    IN new_email email, 
     IN new_firstname TEXT DEFAULT NULL, 
     IN new_lastname TEXT DEFAULT NULL
 )
-RETURNS TABLE("id" INTEGER, pseudo TEXT, email email, is_admin BOOLEAN, firstname TEXT, lastname TEXT, avatar url, updated_at TIMESTAMPTZ) AS $$
+RETURNS TABLE("id" INTEGER, pseudo TEXT, email email, is_admin BOOLEAN, firstname TEXT, lastname TEXT, updated_at TIMESTAMPTZ) AS $$
 BEGIN
     -- En first on essai l'update 
-    UPDATE "Users" SET pseudo = new_pseudo, email = new_email, avatar = new_image, firstname = new_firstname, lastname = new_lastname, updated_at = now() WHERE "new_id" = "Users".id;
+    UPDATE "Users" SET pseudo = new_pseudo, email = new_email, firstname = new_firstname, lastname = new_lastname, updated_at = now() WHERE "new_id" = "Users".id;
     RETURN QUERY SELECT "Users".id,"Users".pseudo, "Users".email, "Users".is_admin, "Users".firstname, "Users".lastname , "Users".updated_at FROM "Users" WHERE "Users".id = new_id;
 END
 $$ LANGUAGE plpgsql;
@@ -487,17 +513,17 @@ $$ LANGUAGE SQL;
 
 
 
---Crer un utilisateur en bdd
 CREATE OR REPLACE FUNCTION create_users_with_result(
     IN new_pseudo TEXT, 
     IN new_email email,
     IN new_password TEXT,
-    IN new_image url, 
-	IN new_id INT DEFAULT -1
+    IN new_id INT DEFAULT -1,
+    IN new_firstname TEXT DEFAULT NULL,
+    IN new_latsname TEXT DEFAULT NULL
 )
-RETURNS TABLE("id" INTEGER, pseudo TEXT, email email, is_admin BOOLEAN, firstname TEXT, lastname TEXT, avatar url) AS $$
+RETURNS TABLE("id" INTEGER, pseudo TEXT, email email, is_admin BOOLEAN, firstname TEXT, lastname TEXT ) AS $$
 BEGIN
-    INSERT INTO "Users" ( pseudo, email, "password", is_admin, avatar) VALUES ( new_pseudo, new_email, new_password, false, new_image ) RETURNING "Users".id INTO new_id ;
+    INSERT INTO "Users" ( pseudo, email, "password", is_admin, firstname, lastname) VALUES ( new_pseudo, new_email, new_password, false, new_firstname, new_lastname ) RETURNING "Users".id INTO new_id ;
     RETURN QUERY SELECT "Users".id,"Users".pseudo, "Users".email, "Users".is_admin, "Users".firstname, "Users".lastname FROM "Users" WHERE "Users".id = new_id;
 END
 $$ LANGUAGE plpgsql;
