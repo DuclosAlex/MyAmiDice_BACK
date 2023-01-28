@@ -3,12 +3,12 @@
 
 BEGIN;
 
-INSERT INTO "Users" ("pseudo", "avatar", "password", "email", "is_admin") VALUES 
-    ('clément', '/avatar/clem', 'bouya', 'bouya@mail.com', true),
-    ('guillaume', '/avatar/guil', 'lolo-forever', 'elfedelamort@truc.game', false),
-    ('alex', '/avatar/alex', 'myamidice', 'duclos.alex85@outlook.fr', false),
-    ('philippe', '/avatar/phil', 'fonctionSQL', 'philippe@sql.fc', false),
-    ('mathieu', '/avatar/math', 'motdepasse', 'test@sql.fc', false);
+INSERT INTO "Users" ("pseudo", "password", "email", "is_admin") VALUES 
+    ('clément', 'bouya', 'bouya@mail.com', true),
+    ('guillaume', 'lolo-forever', 'elfedelamort@truc.game', false),
+    ('alex', 'myamidice', 'duclos.alex85@outlook.fr', false),
+    ('philippe', 'fonctionSQL', 'philippe@sql.fc', false),
+    ('mathieu', 'motdepasse', 'test@sql.fc', false);
 
 INSERT INTO "Games" ("name", "description", "max_players", "notes", "status", "user_id") VALUES 
     ('donjons et dragons', 'tout le monde est mort', 4, 'partie test', 'in progress', 4),
