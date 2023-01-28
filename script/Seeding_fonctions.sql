@@ -309,12 +309,12 @@ SELECT * from create_or_update_invite_with_result(
 	2, 'nop !', 14, 2, 'elfedelamort@truc.game') 
 */
 
-
+/* A tester d'urgence !
 CREATE OR REPLACE FUNCTION delete_invite_by_id(IN gameid INT)
 RETURNS VOID AS $$
     DELETE FROM "Invite" WHERE "game_id" = gameid;
 $$ LANGUAGE SQL;
-/*
+
 Script de TEST de la fonction:
 
 SELECT delete_invite_by_id(1);
