@@ -486,15 +486,14 @@ $$ LANGUAGE SQL;
 CREATE OR REPLACE FUNCTION update_users_with_result(
 	IN new_id INT,
     IN new_pseudo TEXT, 
-    IN new_email email,
-    IN new_image url, 
+    IN new_email email, 
     IN new_firstname TEXT DEFAULT NULL, 
     IN new_lastname TEXT DEFAULT NULL
 )
 RETURNS TABLE("id" INTEGER, pseudo TEXT, email email, is_admin BOOLEAN, firstname TEXT, lastname TEXT, avatar url, updated_at TIMESTAMPTZ) AS $$
 BEGIN
     -- En first on essai l'update 
-    UPDATE "Users" SET pseudo = new_pseudo, email = new_email, avatar = new_image, firstname = new_firstname, lastname = new_lastname, updated_at = now() WHERE "new_id" = "Users".id;
+    UPDATE "Users" SET pseudo = new_pseudo, email = new_email, firstname = new_firstname, lastname = new_lastname, updated_at = now() WHERE "new_id" = "Users".id;
     RETURN QUERY SELECT "Users".id,"Users".pseudo, "Users".email, "Users".is_admin, "Users".firstname, "Users".lastname , "Users".updated_at FROM "Users" WHERE "Users".id = new_id;
 END
 $$ LANGUAGE plpgsql;
