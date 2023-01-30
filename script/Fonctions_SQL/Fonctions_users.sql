@@ -1,3 +1,4 @@
+-- SQLBook: Code
 
 -- SQLBook: Code
 -- Renvoi la liste de tout les utilisateurs
@@ -44,8 +45,8 @@ CREATE OR REPLACE FUNCTION create_users_with_result(
     IN new_pseudo TEXT, 
     IN new_email email,
     IN new_password TEXT,
-    IN new_firstname TEXT DEFAULT NULL,
-    IN new_lastname TEXT DEFAULT NULL,
+    IN new_firstname TEXT,
+    IN new_lastname TEXT,
     IN new_id INT DEFAULT -1
 
 )
