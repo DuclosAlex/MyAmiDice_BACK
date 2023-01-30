@@ -13,24 +13,31 @@ const characterController = {
         res.json(result);
     },
 
-    // async createCharacterWithCaracteristics ( req, res) {
+    async createCharacterWithCaracteristics ( req, res) {
 
-    //     const fullCharacters = [];
+        const fullCharacters = [];
 
-    //     const createCharacter = await characterModel.createOrUpdate(req.body.characters);
-
-    //     const characteristics = req.body.characteristics;
-
-    //     characteristics.unshift(createCharacter.id);
-
-    //     const createCharacteristics = await characteristicModel.createOrUpdate(characteristics);
-
-    //     fullCharacters.push(createCharacter);
-    //     fullCharacters.push(createCharacteristics);
-
-    //     res.json(fullCharacters);
+        const createCharacter = await characterModel.createOrUpdate(req.body.characters);
         
-    // }
+        const characteristics = req.body.characteristics;
+
+        characteristics.characters_id = createCharacter.id;
+
+        console.log("insertCharacteriscits", characteristics)
+
+        const createCharacteristics = await characteristicModel.createOrUpdate(characteristics);
+
+        console.log("characters", createCharacter);
+        console.log("characteristics", createCharacteristics)
+
+        fullCharacters.push(createCharacter);
+        fullCharacters.push(createCharacteristics);
+
+        console.log("full", fullCharacters)
+
+        res.json(fullCharacters);
+        
+    }
 }
 
 module.exports = characterController;

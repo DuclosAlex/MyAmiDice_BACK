@@ -16,7 +16,7 @@ const bodyParser = multer();
 app.use(bodyParser.none());
 
 app.use('/characters', characterRouter);
-app.use('/users/', userRouter);
+app.use('/users', userRouter);
 app.use('/news', newsRouter);
 app.use('/games', gameRouter);
 app.use('/items', itemRouter);

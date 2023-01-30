@@ -1,3 +1,4 @@
+-- SQLBook: Code
 -- SCRIPT DE SEEDING DES FONCTIONS DE LA BDD.
 BEGIN;
 DROP FUNCTION IF EXISTS create_or_update_characteristics_with_result(),
@@ -28,26 +29,30 @@ commit;
 Begin;
 
 --Met à jour les stats(Characteristics) d'un personnage "id" en bdd
+
 CREATE OR REPLACE FUNCTION create_or_update_characteristics_with_result(
     IN new_id INT,
     IN new_strength INT,
     IN new_dexterity INT,
+    IN new_constitution INT,
     IN new_wisdom INT,
     IN new_charisma INT,
-    IN new_constitution INT,
     IN new_intelligence INT,
     IN new_level INT,
-    IN new_hp INT,
+    IN new_max_hp INT,
+    IN new_max_mana INT,
+    IN new_current_hp INT DEFAULT new_max_hp,
+    IN new_current_mana INT DEFAULT new_max_mana,
     IN new_char_id INT
 )
-RETURNS TABLE("id" INTEGER, strength INT, dexterity INT, wisdom INT, charisma INT, constitution INT, intellignece INT, "level" INT, hp INT, character_id INT, create_at TIMESTAMPTZ, updated_at TIMESTAMPTZ) AS $$
+RETURNS TABLE("id" INTEGER, strength INT, dexterity INT, wisdom INT, charisma INT, constitution INT, intellignece INT, "level" INT, max_hp INT, current_hp INT, max_mana INT, current_mana INT, character_id INT) AS $$
 BEGIN
     -- En first on essai l'update 
-    UPDATE "Characteristics" SET strength = new_strength, dexterity = new_dexterity, wisdom = new_wisdom, charisma = new_charisma, constitution = new_constitution, intelligence = new_intelligence, "level" = new_level, hp = new_hp, "character_id" = new_char_id, updated_at = now() WHERE "new_id" = "Characteristics".id;
+    UPDATE "Characteristics" SET strength = new_strength, dexterity = new_dexterity, wisdom = new_wisdom, charisma = new_charisma, constitution = new_constitution, intelligence = new_intelligence, "level" = new_level, max_hp = new_max_hp, current_hp = new_current_hp, max_mana = new_max_mana, current_mana = new_current_mana, "character_id" = new_char_id, updated_at = now() WHERE "new_id" = "Characteristics".id;
     IF NOT FOUND THEN 
-        INSERT INTO "Characteristics" ( strength, dexterity, wisdom, charisma, constitution, intelligence, "level", hp, character_id) VALUES ( new_strength, new_dexterity, new_wisdom, new_charisma, new_constitution, new_intelligence, new_level, new_hp, new_char_id) RETURNING "Characteristics".id INTO new_id; -- on stock la valeur de l'id créer dans "new_id"
+        INSERT INTO "Characteristics" ( strength, dexterity, wisdom, charisma, constitution, intelligence, "level", max_hp, current_hp, max_mana, current_mana, character_id) VALUES ( new_strength, new_dexterity, new_wisdom, new_charisma, new_constitution, new_intelligence, new_level, new_max_hp, new_current_hp, new_max_mana, new_current_mana, new_char_id) RETURNING "Characteristics".id INTO new_id; -- on stock la valeur de l'id créer dans "new_id"
     END IF;
-    RETURN QUERY SELECT "Characteristics".id, "Characteristics".strength, "Characteristics".dexterity, "Characteristics".wisdom, "Characteristics".charisma, "Characteristics".constitution, "Characteristics".intelligence, "Characteristics"."level", "Characteristics".hp, "Characteristics".character_id, "Characteristics".created_at, "Characteristics".updated_at FROM "Characteristics" WHERE "Characteristics".id = new_id;
+    RETURN QUERY SELECT "Characteristics".id, "Characteristics".strength, "Characteristics".dexterity, "Characteristics".wisdom, "Characteristics".charisma, "Characteristics".constitution, "Characteristics".intelligence, "Characteristics"."level", "Characteristics".max_hp, "Characteristics".current_hp, "Characteristics".max_mana, "Characteristics".current_mana, "Characteristics".character_id FROM "Characteristics" WHERE "Characteristics".id = new_id;
 END
 $$ LANGUAGE plpgsql;
 
@@ -114,20 +119,53 @@ SELECT delete_characters_by_id(1);
 SELECT * FROM "Characters";
 */
 
+-- Appele quand le users se connect et recupere ses info
+
+-- Appele quand le users se connect et recupere ses info
 CREATE OR REPLACE FUNCTION user_login(IN test_email email, IN test_password TEXT)
-RETURNS TABLE("login" json) AS $$
+RETURNS TABLE("user" json) AS $$
+ 
+ 
 BEGIN
-  RETURN QUERY SELECT row_to_json("log") as "login"
-  FROM (
-    SELECT "Users".id, "Users".email, "Users".is_admin, "Users".firstname, "Users".lastname, "Users".pseudo,
-    (SELECT json_agg(row_to_json( (SELECT temptable FROM (SELECT "name", "status", "description", "max_players") temptable ))) FROM "Games" WHERE "Users".id = "Games".user_id ) "games",
-    (SELECT json_agg(row_to_json( (SELECT temptable FROM (SELECT "firstname", lastname) temptable ))) FROM "Characters" WHERE "Users".id = "Characters".user_id ) "characters",
-    (SELECT json_agg(row_to_json( (SELECT temptable FROM (SELECT game_id, user_id) temptable ))) FROM "Invite" WHERE "Users".id = "Invite".user_id) "invite"
-    FROM "Users"
-    WHERE "Users".email = test_email AND "Users".password = test_password
-  ) "log";
+RETURN QUERY SELECT row_to_json(Joueurs) as "user"
+FROM (
+	SELECT us.id, us.email, us.is_admin, us.firstname, us.lastname, us.pseudo,  (
+		SELECT json_agg(characters)
+		FROM(
+			SELECT "Characters".id, "Characters"."firstname", "Characters"."lastname"
+			FROM "Characters"
+			WHERE "Characters".user_id = us.id
+		)AS characters
+	) AS characters,
+	(
+		SELECT json_agg(Games)
+		FROM (
+			SELECT gmj."name", gmj.id, gmj."status", gmj."description", gmj."max_players", gmj.user_id, umj."pseudo"
+			FROM "Games" as gmj
+			JOIN "Characters" as cha ON cha.user_id = us.id
+			JOIN "Users" as umj ON umj.id = gmj.user_id
+			WHERE gmj.user_id = us.id OR gmj.id = cha.game_id
+		) as Games
+	) as Games,
+	(
+		SELECT json_agg(Games_Invite)
+		FROM (
+			SELECT gi."name", "Invite"."id",gi."description", uj."pseudo", "Invite".game_id
+			FROM "Invite"
+			LEFT JOIN "Games" as gi ON "Invite".game_id = gi.id
+			LEFT JOIN "Users" as uj ON gi.user_id = uj.id
+			WHERE "Invite".user_id = us.id
+		) as Games_Invite
+	) as Games_Invite
+	FROM "Users" as us
+	WHERE us."email" = test_email AND us."password" = test_password
+) AS Joueurs;
+
 END;
+
 $$ LANGUAGE plpgsql;
+
+
 
 -- Renvoie la liste de toutes les games
 CREATE OR REPLACE FUNCTION get_games() 
@@ -517,8 +555,8 @@ CREATE OR REPLACE FUNCTION create_users_with_result(
     IN new_pseudo TEXT, 
     IN new_email email,
     IN new_password TEXT,
-    IN new_firstname TEXT DEFAULT NULL,
-    IN new_lastname TEXT DEFAULT NULL,
+    IN new_firstname TEXT,
+    IN new_lastname TEXT,
     IN new_id INT DEFAULT -1
 
 )

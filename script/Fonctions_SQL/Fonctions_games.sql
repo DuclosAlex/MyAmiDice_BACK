@@ -1,3 +1,4 @@
+-- SQLBook: Code
 -- Renvoie la liste de toutes les games
 CREATE OR REPLACE FUNCTION get_games() 
 RETURNS TABLE("id" INTEGER, "name" TEXT, "description" TEXT, "max_players" INT, "notes" TEXT, "status" TEXT,  "user_id" INT, "created_at" TIMESTAMPTZ, "updated_at" TIMESTAMPTZ) AS $$
