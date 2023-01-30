@@ -120,7 +120,7 @@ SELECT * FROM "Characters";
 */
 -- Appele quand le users se connect et recupere ses info
 CREATE OR REPLACE FUNCTION user_login(IN test_email email, IN test_password TEXT)
-RETURNS TABLE("user_log" json) AS $$
+RETURNS TABLE("user" json) AS $$
  
  
 BEGIN
