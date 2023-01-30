@@ -1,6 +1,6 @@
 
 -- Appele quand le users se connect et recupere ses info
-CREATE OR REPLACE FUNCTION user_login(IN test_email email, IN test_password BOOLEAN)
+CREATE OR REPLACE FUNCTION user_login(IN test_email email, IN test_password TEXT)
 RETURNS TABLE("user" json) AS $$
  
  
@@ -36,7 +36,7 @@ FROM (
 		) as Games_Invite
 	) as Games_Invite
 	FROM "Users" as us
-	WHERE us."email" = test_email AND test_password = true
+	WHERE us."email" = test_email AND us."password" = test_password
 ) AS Joueurs;
 
 END;
