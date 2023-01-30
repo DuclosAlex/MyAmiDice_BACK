@@ -7,7 +7,7 @@ const gameController = {
 
     async getGameByIdWithAll( req, res) {
 
-        const result = await gameModel.getGameByIdWithAll(req.params.id);
+        const result = await gameModel.getGameByIdWithAll(req.params.id, req.params.userid);
 
         res.json(result);
     }

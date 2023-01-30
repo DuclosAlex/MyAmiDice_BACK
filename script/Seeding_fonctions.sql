@@ -517,9 +517,10 @@ CREATE OR REPLACE FUNCTION create_users_with_result(
     IN new_pseudo TEXT, 
     IN new_email email,
     IN new_password TEXT,
-    IN new_id INT DEFAULT -1,
     IN new_firstname TEXT DEFAULT NULL,
-    IN new_latsname TEXT DEFAULT NULL
+    IN new_latsname TEXT DEFAULT NULL,
+    IN new_id INT DEFAULT -1
+
 )
 RETURNS TABLE("id" INTEGER, pseudo TEXT, email email, is_admin BOOLEAN, firstname TEXT, lastname TEXT ) AS $$
 BEGIN
