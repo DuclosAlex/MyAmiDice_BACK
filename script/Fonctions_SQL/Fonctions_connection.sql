@@ -5,7 +5,7 @@ RETURNS TABLE("user_log" json) AS $$
  
  
 BEGIN
-RETURN QUERY SELECT row_to_json(Joueurs) as "user_log"
+RETURN QUERY SELECT row_to_json(Joueurs) as "user"
 FROM (
 	SELECT us.id, us.email, us.is_admin, us.firstname, us.lastname, us.pseudo,  (
 		SELECT jsonb_agg(characters)
