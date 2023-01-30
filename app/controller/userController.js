@@ -11,6 +11,8 @@ const userController = {
 
         const result = await userModel.insertUser(user);
 
+        console.log("resultC", result)
+
         res.json(result)
     },
 
