@@ -45,7 +45,7 @@ CREATE OR REPLACE FUNCTION create_users_with_result(
     IN new_email email,
     IN new_password TEXT,
     IN new_firstname TEXT DEFAULT NULL,
-    IN new_latsname TEXT DEFAULT NULL,
+    IN new_lastname TEXT DEFAULT NULL,
     IN new_id INT DEFAULT -1
 
 )
