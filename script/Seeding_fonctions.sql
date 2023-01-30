@@ -114,21 +114,51 @@ Script de TEST de la fonction:
 SELECT delete_characters_by_id(1);
 SELECT * FROM "Characters";
 */
-
+-- Appele quand le users se connect et recupere ses info
 CREATE OR REPLACE FUNCTION user_login(IN test_email email, IN test_password TEXT)
-RETURNS TABLE("login" json) AS $$
+RETURNS TABLE("user_log" json) AS $$
+ 
+ 
 BEGIN
-  RETURN QUERY SELECT row_to_json("log") as "login"
-  FROM (
-    SELECT "Users".id, "Users".email, "Users".is_admin, "Users".firstname, "Users".lastname, "Users".pseudo,
-    (SELECT json_agg(row_to_json( (SELECT temptable FROM (SELECT "name", "status", "description", "max_players") temptable ))) FROM "Games" WHERE "Users".id = "Games".user_id ) "games",
-    (SELECT json_agg(row_to_json( (SELECT temptable FROM (SELECT "firstname", lastname) temptable ))) FROM "Characters" WHERE "Users".id = "Characters".user_id ) "characters",
-    (SELECT json_agg(row_to_json( (SELECT temptable FROM (SELECT game_id, user_id) temptable ))) FROM "Invite" WHERE "Users".id = "Invite".user_id) "invite"
-    FROM "Users"
-    WHERE "Users".email = test_email AND "Users".password = test_password
-  ) "log";
+RETURN QUERY SELECT row_to_json(Joueurs) as "user_log"
+FROM (
+	SELECT us.id, us.email, us.is_admin, us.firstname, us.lastname, us.pseudo,  (
+		SELECT jsonb_agg(characters)
+		FROM(
+			SELECT "Characters".id, "Characters"."firstname", "Characters"."lastname"
+			FROM "Characters"
+			WHERE "Characters".user_id = us.id
+		)AS characters
+	) AS characters,
+	(
+		SELECT json_agg(Games)
+		FROM (
+			SELECT gmj."name", gmj.id, gmj."status", gmj."description", gmj."max_players", gmj.user_id, umj."pseudo"
+			FROM "Games" as gmj
+			JOIN "Characters" as cha ON cha.user_id = us.id
+			JOIN "Users" as umj ON umj.id = gmj.user_id
+			WHERE gmj.user_id = us.id OR gmj.id = cha.game_id
+		) as Games
+	) as Games,
+	(
+		SELECT json_agg(Games_Invite)
+		FROM (
+			SELECT gi."name", "Invite"."id",gi."description", uj."pseudo", "Invite".game_id
+			FROM "Invite"
+			LEFT JOIN "Games" as gi ON "Invite".game_id = gi.id
+			LEFT JOIN "Users" as uj ON gi.user_id = uj.id
+			WHERE "Invite".user_id = us.id
+		) as Games_Invite
+	) as Games_Invite
+	FROM "Users" as us
+	WHERE us."email" = test_email AND us."password" = test_password
+) AS Joueurs;
+
 END;
+
 $$ LANGUAGE plpgsql;
+
+
 
 -- Renvoie la liste de toutes les games
 CREATE OR REPLACE FUNCTION get_games() 
