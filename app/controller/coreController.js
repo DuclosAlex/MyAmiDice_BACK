@@ -35,7 +35,11 @@ const coreController = {
 
           let data = req.body;
 
+          console.log("data", data);
+
           const result = await model.createOrUpdate(table, data);
+
+          console.log("result", result)
 
           res.json(result);
         } catch (e) {

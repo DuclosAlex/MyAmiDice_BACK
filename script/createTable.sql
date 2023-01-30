@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS "Games" (
     "description" TEXT NOT NULL,
     "max_players" INT NOT NULL,
     "notes" TEXT,
-    "status" TEXT NOT NULL DEFAULT 'start',
+    "status" TEXT NOT NULL DEFAULT 'en cours',
     "user_id" INT REFERENCES "Users"("id") ON DELETE CASCADE,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP, -- on peut également utiliser NOW()
     "updated_at" TIMESTAMPTZ

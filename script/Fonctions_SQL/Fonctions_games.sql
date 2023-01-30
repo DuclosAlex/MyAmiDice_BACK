@@ -24,9 +24,9 @@ CREATE OR REPLACE FUNCTION create_or_update_games_with_result(
 RETURNS TABLE("id" INTEGER, "name" TEXT, "description" TEXT, "max_players" INT, "notes" TEXT, "status" TEXT, "user_id" INT) AS $$
 BEGIN
     -- En first on essai l'update 
-    UPDATE "Games" SET "name" = "new_name", "notes" = "new_notes", "status" = "new_status", "description" = "new_description", "user_id" = "new_user_id" WHERE "new_id" = "Games".id;
+    UPDATE "Games" SET "name" = "new_name", "notes" = "new_notes", "status" = "new_status", "description" = "new_description", "user_id" = "new_user_id", "updated_at" = now() WHERE "new_id" = "Games".id;
     IF NOT FOUND THEN 
-        INSERT INTO "Games" ( "name", "max_players", "description", "user_id") VALUES ( "new_name", "new_max_players", "new_description", "new_user_id");
+        INSERT INTO "Games" ( "name", "max_players", "description", "user_id", "status", "notes", created_at) VALUES ( "new_name", "new_max_players", "new_description", "new_user_id", "new_status", "new_notes", now()) RETURNING "Games".id INTO new_id;
     END IF;
     RETURN QUERY SELECT "Games".id,"Games"."name", "Games"."description", "Games"."max_players",  "Games"."notes", "Games"."status", "Games"."user_id" FROM "Games" WHERE "Games".id = new_id;
 END

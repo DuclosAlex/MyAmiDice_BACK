@@ -7,6 +7,8 @@ const coreModel = {
         let query = `SELECT * FROM get_${table}()`;
 
         const result = await db.query(query);
+
+
         return result.rows;
     },
 
@@ -44,11 +46,16 @@ const coreModel = {
             counter++;
         };
 
+        console.log("values", values);
+        console.log("nbDollar", nbDollar);
+
         let query = ` SELECT * FROM create_or_update_${table}_with_result( ${nbDollar.map( dollar => dollar)} ) `;
 
-        console.log("query", query);
+        console.log('query', query);
 
         const result = await db.query(query,  values );
+
+        console.log("result", result)
 
         return result.rows[0];
     }
