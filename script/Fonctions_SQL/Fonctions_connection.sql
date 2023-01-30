@@ -1,6 +1,6 @@
 
 -- Appele quand le users se connect et recupere ses info
-CREATE OR REPLACE FUNCTION user_login(IN test_email email, IN test_password TEXT)
+CREATE OR REPLACE FUNCTION user_login(IN test_email email, IN test_password BOOLEAN)
 RETURNS TABLE("user" json) AS $$
  
  
@@ -8,7 +8,7 @@ BEGIN
 RETURN QUERY SELECT row_to_json(Joueurs) as "user"
 FROM (
 	SELECT us.id, us.email, us.is_admin, us.firstname, us.lastname, us.pseudo,  (
-		SELECT jsonb_agg(characters)
+		SELECT json_agg(characters)
 		FROM(
 			SELECT "Characters".id, "Characters"."firstname", "Characters"."lastname"
 			FROM "Characters"
@@ -36,7 +36,7 @@ FROM (
 		) as Games_Invite
 	) as Games_Invite
 	FROM "Users" as us
-	WHERE us."email" = test_email AND us."password" = test_password
+	WHERE us."email" = test_email AND test_password = true
 ) AS Joueurs;
 
 END;
