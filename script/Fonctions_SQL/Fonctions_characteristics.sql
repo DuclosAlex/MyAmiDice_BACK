@@ -4,15 +4,15 @@ CREATE OR REPLACE FUNCTION create_or_update_characteristics_with_result(
     IN new_id INT,
     IN new_strength INT,
     IN new_dexterity INT,
+    IN new_constitution INT,
     IN new_wisdom INT,
     IN new_charisma INT,
-    IN new_constitution INT,
     IN new_intelligence INT,
     IN new_level INT,
     IN new_max_hp INT,
-    IN new_current_hp INT,
     IN new_max_mana INT,
-    IN new_current_mana INT,
+    IN new_current_hp INT DEFAULT new_max_hp,
+    IN new_current_mana INT DEFAULT new_max_mana,
     IN new_char_id INT
 )
 RETURNS TABLE("id" INTEGER, strength INT, dexterity INT, wisdom INT, charisma INT, constitution INT, intellignece INT, "level" INT, max_hp INT, current_hp INT, max_mana INT, current_mana INT, character_id INT) AS $$

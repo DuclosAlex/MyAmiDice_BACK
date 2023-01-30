@@ -18,15 +18,22 @@ const characterController = {
         const fullCharacters = [];
 
         const createCharacter = await characterModel.createOrUpdate(req.body.characters);
-
+        
         const characteristics = req.body.characteristics;
 
-        characteristics.unshift(createCharacter.id);
+        characteristics.characters_id = createCharacter.id;
+
+        console.log("insertCharacteriscits", characteristics)
 
         const createCharacteristics = await characteristicModel.createOrUpdate(characteristics);
 
+        console.log("characters", createCharacter);
+        console.log("characteristics", createCharacteristics)
+
         fullCharacters.push(createCharacter);
         fullCharacters.push(createCharacteristics);
+
+        console.log("full", fullCharacters)
 
         res.json(fullCharacters);
         
