@@ -17,11 +17,19 @@ const characterController = {
 
         const fullCharacters = [];
 
-        const createCharacter = await characterModel.createOrUpdate(req.body.characters);
+        console.log('body', req.body);
+
+        const createCharacter = await characterModel.createOrUpdate(req.body[0]);
+
+        console.log('characterbefore', character)
         
-        const characteristics = req.body.characteristics;
+        const characteristics = req.body[1];
+
+        console.log("charac without char_id", characteristics)
 
         characteristics.characters_id = createCharacter.id;
+
+        console.log('characteristicsBefore', characteristics)
 
         console.log("insertCharacteriscits", characteristics)
 
@@ -31,6 +39,8 @@ const characterController = {
         console.log("characteristics", createCharacteristics)
 
         fullCharacters.push(createCharacter);
+
+        console.log("fullCharac onlu char", fullCharacters)
         fullCharacters.push(createCharacteristics);
 
         console.log("full", fullCharacters)
