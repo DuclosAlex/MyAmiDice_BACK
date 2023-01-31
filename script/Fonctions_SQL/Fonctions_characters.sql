@@ -42,7 +42,7 @@ CREATE OR REPLACE FUNCTION create_or_update_characters_with_result(
     IN new_is_alive BOOLEAN DEFAULT true
 
 )
-RETURNS TABLE("id" INTEGER, firstname TEXT, lastname TEXT, "description" TEXT, race TEXT, "class" TEXT, is_alive BOOLEAN, avatar url) AS $$
+RETURNS TABLE("id" INTEGER, firstname TEXT, lastname TEXT, "description" TEXT, race TEXT, "class" TEXT, avatar url, is_alive BOOLEAN) AS $$
 BEGIN
     -- En first on essai l'update 
     UPDATE "Characters" SET firstname = new_firstname, lastname = new_lastname, avatar = new_avatar, "description" = new_description, race = new_race, is_alive= new_is_alive, "class" = new_class WHERE "new_id" = "Characters".id;
