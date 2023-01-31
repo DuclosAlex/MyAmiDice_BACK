@@ -21,7 +21,7 @@ const characterController = {
 
         const createCharacter = await characterModel.createOrUpdate(req.body[0]);
 
-        console.log('characterbefore', character)
+        console.log('characterbefore', createCharacter)
         
         const characteristics = req.body[1];
 
