@@ -41,8 +41,8 @@ CREATE OR REPLACE FUNCTION create_or_update_characteristics_with_result(
     IN new_level INT,
     IN new_max_hp INT,
     IN new_max_mana INT,
-    IN new_current_hp INT DEFAULT new_max_hp,
-    IN new_current_mana INT DEFAULT new_max_mana,
+    IN new_current_hp INT,
+    IN new_current_mana INT,
     IN new_char_id INT
 )
 RETURNS TABLE("id" INTEGER, strength INT, dexterity INT, wisdom INT, charisma INT, constitution INT, intellignece INT, "level" INT, max_hp INT, current_hp INT, max_mana INT, current_mana INT, character_id INT) AS $$
@@ -50,7 +50,7 @@ BEGIN
     -- En first on essai l'update 
     UPDATE "Characteristics" SET strength = new_strength, dexterity = new_dexterity, wisdom = new_wisdom, charisma = new_charisma, constitution = new_constitution, intelligence = new_intelligence, "level" = new_level, max_hp = new_max_hp, current_hp = new_current_hp, max_mana = new_max_mana, current_mana = new_current_mana, "character_id" = new_char_id, updated_at = now() WHERE "new_id" = "Characteristics".id;
     IF NOT FOUND THEN 
-        INSERT INTO "Characteristics" ( strength, dexterity, wisdom, charisma, constitution, intelligence, "level", max_hp, current_hp, max_mana, current_mana, character_id) VALUES ( new_strength, new_dexterity, new_wisdom, new_charisma, new_constitution, new_intelligence, new_level, new_max_hp, new_current_hp, new_max_mana, new_current_mana, new_char_id) RETURNING "Characteristics".id INTO new_id; -- on stock la valeur de l'id créer dans "new_id"
+        INSERT INTO "Characteristics" ( strength, dexterity, wisdom, charisma, constitution, intelligence, "level", max_hp, current_hp, max_mana, current_mana, character_id) VALUES ( new_strength, new_dexterity, new_wisdom, new_charisma, new_constitution, new_intelligence, new_level, new_max_hp, new_max_hp, new_max_mana, new_max_mana, new_char_id) RETURNING "Characteristics".id INTO new_id; -- on stock la valeur de l'id créer dans "new_id"
     END IF;
     RETURN QUERY SELECT "Characteristics".id, "Characteristics".strength, "Characteristics".dexterity, "Characteristics".wisdom, "Characteristics".charisma, "Characteristics".constitution, "Characteristics".intelligence, "Characteristics"."level", "Characteristics".max_hp, "Characteristics".current_hp, "Characteristics".max_mana, "Characteristics".current_mana, "Characteristics".character_id FROM "Characteristics" WHERE "Characteristics".id = new_id;
 END
@@ -179,8 +179,8 @@ $$ LANGUAGE SQL;
 CREATE OR REPLACE FUNCTION create_or_update_games_with_result(
 	IN "new_id" INT,
     IN "new_name" TEXT, 
+	IN "new_description" TEXT,
     IN "new_max_players" INT, 
-    IN "new_description" TEXT,
     IN "new_user_id" INT,
     IN "new_notes" TEXT DEFAULT null,
     IN "new_status" TEXT DEFAULT 'start'
@@ -189,11 +189,11 @@ CREATE OR REPLACE FUNCTION create_or_update_games_with_result(
 RETURNS TABLE("id" INTEGER, "name" TEXT, "description" TEXT, "max_players" INT, "notes" TEXT, "status" TEXT, "user_id" INT) AS $$
 BEGIN
     -- En first on essai l'update 
-    UPDATE "Games" SET "name" = "new_name", "notes" = "new_notes", "status" = "new_status", "description" = "new_description", "user_id" = "new_user_id" WHERE "new_id" = "Games".id;
+    UPDATE "Games" SET "name" = "new_name", "notes" = "new_notes", "status" = "new_status", "description" = "new_description", "user_id" = "new_user_id", "updated_at" = now() WHERE "new_id" = "Games".id;
     IF NOT FOUND THEN 
-        INSERT INTO "Games" ( "name", "max_players", "description", "user_id") VALUES ( "new_name", "new_max_players", "new_description", "new_user_id");
+        INSERT INTO "Games" ( "name", "max_players", "description", "user_id", "status", "notes", created_at) VALUES ( "new_name", "new_max_players", "new_description", "new_user_id", "new_status", "new_notes", now()) RETURNING "Games".id INTO new_id;
     END IF;
-    RETURN QUERY SELECT "Games".id,"Games"."name", "Games"."description", "Games"."max_players", "Games"."notes", "Games"."status", "Games"."user_id" FROM "Games" WHERE "Games".id = new_id;
+    RETURN QUERY SELECT "Games".id,"Games"."name", "Games"."description", "Games"."max_players",  "Games"."notes", "Games"."status", "Games"."user_id" FROM "Games" WHERE "Games".id = new_id;
 END
 $$ LANGUAGE plpgsql;
 

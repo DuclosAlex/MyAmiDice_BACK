@@ -8,7 +8,6 @@ const router = express.Router();
 router.get('/getall', characterController.basicQuery.getAll);
 router.get('/:id', characterController.getCharacterByIdWithAll);
 router.delete( '/:id', characterController.basicQuery.deleteById);
-router.post('', fileUpload.single('file'), characterController.basicQuery.createOrUpdate );
-
+router.post('/create', fileUpload.single('file'), characterController.createCharacterWithCaracteristics );
 
 module.exports = router;

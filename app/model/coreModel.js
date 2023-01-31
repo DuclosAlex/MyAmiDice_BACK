@@ -7,6 +7,8 @@ const coreModel = {
         let query = `SELECT * FROM get_${table}()`;
 
         const result = await db.query(query);
+
+
         return result.rows;
     },
 
@@ -31,28 +33,44 @@ const coreModel = {
 
     async createOrUpdate ( table, data) {
 
-        let values = [];
-        let nbDollar = [];
-        let counter = 1;
+        try {
 
-        for( key in data) {
+            
+            let values = [];
+            let nbDollar = [];
+            let counter = 1;
+            
+            console.log('dataModel', table)
+            console.log('dataModel', data)
+            
+            for( key in data) {
+                
+                console.log("key", key);
+                
+                values.push(data[key]);
+                nbDollar.push(`$${counter}`)
+                counter++;
+            };
+            
+            console.log("values", values);
+            console.log("nbDollar", nbDollar);
+            
+            let query = ` SELECT * FROM create_or_update_${table}_with_result( ${nbDollar.map( dollar => dollar)} ) `;
+            
+            console.log('query', query);
+            
+            const result = await db.query(query,  values );
+            
+            console.log("result", result)
+            
+            return result.rows[0];
 
-            console.log("key", key);
+        } catch(e) {
 
-            values.push(data[key]);
-            nbDollar.push(`$${counter}`)
-            counter++;
-        };
-
-        let query = ` SELECT * FROM create_or_update_${table}_with_result( ${nbDollar.map( dollar => dollar)} ) `;
-
-        console.log("query", query);
-
-        const result = await db.query(query,  values );
-
-        return result.rows[0];
+            console.log("error", e)
+        }
     }
-
+        
 }
 
 module.exports = coreModel;
