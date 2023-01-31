@@ -21,7 +21,7 @@ const characterController = {
 
         console.log('character', req.body[0])
 
-        const createCharacter = await characterModel.createOrUpdate(req.body[0]);
+        const createCharacter = await characterModel.createOrUpdate("characters", req.body[0]);
 
         console.log('characterbefore', createCharacter)
         
@@ -31,11 +31,11 @@ const characterController = {
 
         characteristics.characters_id = createCharacter.id;
 
-        console.log('characteristicsBefore', characteristics)
+        console.log('characteristicsBefore', characteristics);
 
-        console.log("insertCharacteriscits", characteristics)
+        console.log("insertCharacteriscits", characteristics);
 
-        const createCharacteristics = await characteristicModel.createOrUpdate(characteristics);
+        const createCharacteristics = await characteristicModel.createOrUpdate("characteristics", characteristics);
 
         console.log("characters", createCharacter);
         console.log("characteristics", createCharacteristics)
