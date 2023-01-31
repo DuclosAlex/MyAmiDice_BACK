@@ -64,12 +64,12 @@ RETURNS TABLE( "character" json) AS $$
 BEGIN
 	RETURN QUERY SELECT row_to_json(Charac) as "character"
 	FROM (
-	SELECT "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters".is_alive, "Characters"."class", (
+	SELECT "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters".is_alive, "Characters"."class", "Characters"."description", "Characters"."avatar", (
 		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT id, "name", "description") temptable))) FROM "Skills" WHERE "Characters".id = "Skills".character_id
 		) skills, (
 		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT id, "name", "quantity", "description") temptable))) FROM "Items" WHERE "Characters".id = "Items".character_id
 		) items, (
-        SELECT json_agg(row_to_json((SELECT temptable FROM ( SELECT id, strength, dexterity, constitution, wisdom, charisma, intelligence, "level", hp) temptable))) FROM "Characteristics" WHERE "Characters".id = "Characteristics".character_id
+        SELECT json_agg(row_to_json((SELECT temptable FROM ( SELECT id, strength, dexterity, constitution, wisdom, charisma, intelligence, "level", max_hp, current_hp, max_mana, current_mana) temptable))) FROM "Characteristics" WHERE "Characters".id = "Characteristics".character_id
         ) "characteristics"
 		FROM "Characters" WHERE "Characters".id = character_id
 	) Charac;
