@@ -45,7 +45,7 @@ CREATE OR REPLACE FUNCTION create_or_update_characteristics_with_result(
     IN new_current_mana INT,
     IN new_char_id INT
 )
-RETURNS TABLE("id" INTEGER, strength INT, dexterity INT, wisdom INT, charisma INT, constitution INT, intellignece INT, "level" INT, max_hp INT, current_hp INT, max_mana INT, current_mana INT, character_id INT) AS $$
+RETURNS TABLE("id" INTEGER, strength INT, dexterity INT, wisdom INT, charisma INT, constitution INT, intelligence INT, "level" INT, max_hp INT, current_hp INT, max_mana INT, current_mana INT, character_id INT) AS $$
 BEGIN
     -- En first on essai l'update 
     UPDATE "Characteristics" SET strength = new_strength, dexterity = new_dexterity, wisdom = new_wisdom, charisma = new_charisma, constitution = new_constitution, intelligence = new_intelligence, "level" = new_level, max_hp = new_max_hp, current_hp = new_current_hp, max_mana = new_max_mana, current_mana = new_current_mana, "character_id" = new_char_id, updated_at = now() WHERE "new_id" = "Characteristics".id;
@@ -90,14 +90,14 @@ CREATE OR REPLACE FUNCTION create_or_update_characters_with_result(
     IN new_is_alive BOOLEAN DEFAULT true
 
 )
-RETURNS TABLE("id" INTEGER, firstname TEXT, lastname TEXT, "description" TEXT, race TEXT, "class" TEXT, is_alive BOOLEAN, avatar url) AS $$
+RETURNS TABLE("id" INTEGER, firstname TEXT, lastname TEXT, "description" TEXT, race TEXT, "class" TEXT, avatar url, is_alive BOOLEAN) AS $$
 BEGIN
     -- En first on essai l'update 
     UPDATE "Characters" SET firstname = new_firstname, lastname = new_lastname, avatar = new_avatar, "description" = new_description, race = new_race, is_alive= new_is_alive, "class" = new_class WHERE "new_id" = "Characters".id;
     IF NOT FOUND THEN 
         INSERT INTO "Characters" ( firstname, lastname, description, race, class, "user_id", "game_id", "avatar", is_alive ) VALUES ( new_firstname, new_lastname, new_description, new_race, new_class, new_user_id, new_game_id, new_avatar, new_is_alive) RETURNING "Characters".id INTO new_id; -- on stock la valeur de l'id créer dans "new_id"
     END IF;
-    RETURN QUERY SELECT "Characters".id, "Characters".firstname, "Characters".lastname, "Characters".avatar, "Characters".description, "Characters".race, "Characters".class, "Characters".is_alive FROM "Characters" WHERE "Characters".id = new_id;
+    RETURN QUERY SELECT "Characters".id, "Characters".firstname, "Characters".lastname, "Characters".description, "Characters".race, "Characters".class, "Characters".avatar, "Characters".is_alive FROM "Characters" WHERE "Characters".id = new_id;
 END
 $$ LANGUAGE plpgsql;
 
