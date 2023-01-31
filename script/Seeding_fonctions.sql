@@ -341,23 +341,12 @@ BEGIN
     RETURN QUERY SELECT "Invite".id, "Invite".game_id, "Invite"."user_id", "Invite"."status", "Invite".created_at, "Invite".updated_at FROM "Invite" WHERE "Invite".id = new_id;
 END;
 $$ LANGUAGE plpgsql;
-/*
-Test de la fonction OK: 
-SELECT * from create_or_update_invite_with_result(
-	2, 'nop !', 14, 2, 'elfedelamort@truc.game') 
-*/
 
-/* A tester d'urgence !
-CREATE OR REPLACE FUNCTION delete_invite_by_id(IN gameid INT)
+CREATE OR REPLACE FUNCTION delete_invite_by_id(IN invite_id INT)
 RETURNS VOID AS $$
-    DELETE FROM "Invite" WHERE "game_id" = gameid;
+    DELETE FROM "Invite" WHERE "Invite".id = invite_id;
 $$ LANGUAGE SQL;
 
-Script de TEST de la fonction:
-
-SELECT delete_invite_by_id(1);
-SELECT * FROM "Invite";
-*/
 
 -- SQLBook: Code
 -- Met l'item “:id” à jour ou Créer un nouvel item en base de données si il n'existe pas
