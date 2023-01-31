@@ -49,7 +49,7 @@ BEGIN
     IF NOT FOUND THEN 
         INSERT INTO "Characters" ( firstname, lastname, description, race, class, "user_id", "game_id", "avatar", is_alive ) VALUES ( new_firstname, new_lastname, new_description, new_race, new_class, new_user_id, new_game_id, new_avatar, new_is_alive) RETURNING "Characters".id INTO new_id; -- on stock la valeur de l'id créer dans "new_id"
     END IF;
-    RETURN QUERY SELECT "Characters".id, "Characters".firstname, "Characters".lastname, "Characters".avatar, "Characters".description, "Characters".race, "Characters".class, "Characters".is_alive FROM "Characters" WHERE "Characters".id = new_id;
+    RETURN QUERY SELECT "Characters".id, "Characters".firstname, "Characters".lastname, "Characters".description, "Characters".race, "Characters".class, "Characters".avatar, "Characters".is_alive FROM "Characters" WHERE "Characters".id = new_id;
 END
 $$ LANGUAGE plpgsql;
 
