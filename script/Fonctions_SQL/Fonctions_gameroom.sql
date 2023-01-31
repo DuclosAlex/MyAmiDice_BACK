@@ -30,7 +30,7 @@ BEGIN
 				(
 					SELECT json_agg(Items)
 					FROM(
-						SELECT "Items".name, "Items".description, "Items".quantity,
+						SELECT "Items".name, "Items".description, "Items".quantity
 						FROM "Items"
 						WHERE "Items".character_id = "Characters".id
 					) AS Items
