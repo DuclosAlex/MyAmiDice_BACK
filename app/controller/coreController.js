@@ -12,7 +12,8 @@ const coreController = {
 
       getById: async (req, res) => {
         try {
-          const id = req.params.id;
+
+          const id = Number(req.params.id);
           const result = await model.getById(table, id);
           res.json(result);
         } catch (e) {
@@ -31,6 +32,7 @@ const coreController = {
       },
 
       createOrUpdate: async (req, res) => {
+        
         try {
 
           let data = req.body;
