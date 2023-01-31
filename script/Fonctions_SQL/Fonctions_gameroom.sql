@@ -10,7 +10,7 @@ BEGIN
 		(
 			SELECT jsonb_agg(Maps)
 			FROM(	
-				SELECT "Maps".url, "Maps".name, "Maps".category
+				SELECT "Maps".url, "Maps".name, "Maps".category, "Maps".id
 				FROM "Maps" FULL JOIN "game_has_maps" ON "Maps".id = "game_has_maps".map_id
 				WHERE "Games".id = "game_has_maps".game_id
 			) AS Maps
@@ -18,7 +18,7 @@ BEGIN
 		(
 			SELECT jsonb_agg(personnages)
 			FROM(
-				SELECT "Characters".race, "Characters".class, "Characters".avatar, "Characters".lastname, "Characters".firstname, "Characters".description, 
+				SELECT "Characters".race, "Characters".class, "Characters".avatar, "Characters".lastname, "Characters".firstname, "Characters".description, "Characters".id,
 				(
 					SELECT json_agg(Skills)
 					FROM(
@@ -28,21 +28,21 @@ BEGIN
 					) AS Skills
 				) AS Skills,
 				(
-					SELECT json_agg(objets)
+					SELECT json_agg(Items)
 					FROM(
-						SELECT "Items".name, "Items".description, "Items".quantity
+						SELECT "Items".name, "Items".description, "Items".quantity,
 						FROM "Items"
 						WHERE "Items".character_id = "Characters".id
-					) AS objets
-				) AS objets,
+					) AS Items
+				) AS Items,
 				(
-					SELECT json_agg(Stats)
+					SELECT json_agg("Characteristics")
 					FROM(
 						SELECT "Characteristics".strength, "Characteristics".dexterity, "Characteristics".wisdom, "Characteristics".charisma, "Characteristics".constitution, "Characteristics".intelligence, "Characteristics".level, "Characteristics".max_hp, "Characteristics".current_hp, "Characteristics".max_mana, "Characteristics".current_mana
 						FROM "Characteristics"
 						WHERE "Characteristics".character_id = "Characters".id
-					) AS Stats
-				) AS Stats
+					) AS "Characteristics"
+				) AS "Characteristics"
 				FROM "Characters" FULL JOIN "Users" ON "Users".id = "Characters".user_id
 				WHERE "Characters".user_id = "Users".id
 			)AS Personnages
@@ -67,11 +67,11 @@ BEGIN
 		(
 			SELECT jsonb_agg(personnages)
 			FROM(
-				SELECT "Characters".race, "Characters".class, "Characters".avatar, "Characters".lastname, "Characters".firstname, "Characters".description, 
+				SELECT "Characters".race, "Characters".class, "Characters".avatar, "Characters".lastname, "Characters".firstname, "Characters".description, "Characters".id,
 				(
 					SELECT json_agg(Skills)
 					FROM(
-						SELECT "Skills".name, "Skills".description
+						SELECT "Skills".name, "Skills".description, "Skills".id
 						FROM "Skills"
 						WHERE "Skills".character_id = "Characters".id
 					) AS Skills
@@ -79,7 +79,7 @@ BEGIN
 				(
 					SELECT json_agg(objets)
 					FROM(
-						SELECT "Items".name, "Items".description, "Items".quantity
+						SELECT "Items".name, "Items".description, "Items".quantity, "Items".id
 						FROM "Items"
 						WHERE "Items".character_id = "Characters".id
 					) AS objets
@@ -87,7 +87,7 @@ BEGIN
 				(
 					SELECT json_agg(Stats)
 					FROM(
-						SELECT "Characteristics".strength, "Characteristics".dexterity, "Characteristics".wisdom, "Characteristics".charisma, "Characteristics".constitution, "Characteristics".intelligence, "Characteristics".level, "Characteristics".max_hp, "Characteristics".current_hp, "Characteristics".max_mana, "Characteristics".current_mana
+						SELECT "Characteristics".strength, "Characteristics".dexterity, "Characteristics".wisdom, "Characteristics".charisma, "Characteristics".constitution, "Characteristics".intelligence, "Characteristics".level, "Characteristics".max_hp, "Characteristics".current_hp, "Characteristics".max_mana, "Characteristics".current_mana, "Characteristics".id
 						FROM "Characteristics"
 						WHERE "Characteristics".character_id = "Characters".id
 					) AS Stats
