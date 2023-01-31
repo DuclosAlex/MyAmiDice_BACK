@@ -1,3 +1,4 @@
+-- SQLBook: Code
 -- Recupere un charater par son id
 CREATE OR REPLACE FUNCTION get_character_by_id_with_all(
     IN character_id INT
