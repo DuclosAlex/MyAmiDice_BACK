@@ -1,7 +1,7 @@
 // Dans le fichier mapRouter.js
 const express = require('express');
 const { mapController } = require('../controller');
-const fileUpload = require('../services/fileUploadMiddleware')('public/maps/');
+// const fileUpload = require('../services/fileUploadMiddleware')('public/maps/');
 
 const router = express.Router();
 
