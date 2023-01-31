@@ -3,9 +3,9 @@ const { skillController } = require('../controller');
 
 const router = express.Router();
 
-// router.get('', skillController.basicQuery.getAll);
-// router.get('/:id', skillController.basicQuery.getById);
+router.get('/getall', skillController.basicQuery.getAll);
+router.get('/:id', skillController.basicQuery.getById);
 router.delete('/:id', skillController.basicQuery.deleteById);
-router.post('', skillController.basicQuery.createOrUpdate );
+router.post('/create', skillController.basicQuery.createOrUpdate );
 
 module.exports = router;
