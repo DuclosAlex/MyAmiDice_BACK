@@ -31,9 +31,9 @@ const characterController = {
 
         characteristics.characters_id = createCharacter.id;
 
-        console.log('characteristicsBefore', characteristics)
+        console.log('characteristicsBefore', characteristics);
 
-        console.log("insertCharacteriscits", characteristics)
+        console.log("insertCharacteriscits", characteristics);
 
         const createCharacteristics = await characteristicModel.createOrUpdate("characteristics", characteristics);
 
