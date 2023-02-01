@@ -1,5 +1,5 @@
 const coreModel = require('./coreModel');
-const db = require('./dbClient')
+const db = require('./dbClient');
 
 const mapModel = {
 

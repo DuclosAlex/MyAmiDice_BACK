@@ -10,6 +10,6 @@ const router = express.Router();
 router.get('/:id', characterController.getCharacterByIdWithAll);
 router.delete( '/:id', characterController.basicQuery.deleteById);
 router.post('/create', fileUpload.array('avatar'), characterController.createCharacterWithCaracteristics );
-router.post('/update', fileUpload.single('avatar'), characterController.updateCharacter );
+router.post('/update', fileUpload.single('avatar'), characterController.updateCharacter);
 
 module.exports = router;
