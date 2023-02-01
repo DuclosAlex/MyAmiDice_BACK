@@ -1,7 +1,7 @@
 // Dans le fichier characterRouter.js
 const express = require('express');
 const { characterController } = require('../controller');
-const fileUpload = require('../../services/fileUploadMiddleware')('public/characters/');
+const fileUpload = require('../../service/fileUploadMiddleware')('public/characters/');
 
 
 const router = express.Router();
