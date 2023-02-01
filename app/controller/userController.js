@@ -9,8 +9,8 @@ const userController = {
 
     async createUser ( req, res ) {
 
-        // let salt = await bcrypt.genSalt(10)
-        // req.body.password = await bcrypt.hash(req.body.password, salt)
+        let salt = await bcrypt.genSalt(10)
+        req.body.password = await bcrypt.hash(req.body.password, salt)
 
         const user = req.body;
 
@@ -24,6 +24,9 @@ const userController = {
 
     async updateUser( req, res) {
 
+        let salt = await bcrypt.genSalt(10)
+        req.body.password = await bcrypt.hash(req.body.password, salt) //verifié le nom envoyé par le front
+
         const user = req.body;
 
         const result = await userModel.updateUser(user);
@@ -33,10 +36,10 @@ const userController = {
 
     async logUser ( req, res) {
 
-        // let password = await db.query(`SELECT password FROM "Users" WHERE "Users".email = '${req.body.email}'`);
-        // password = password.rows[0];
-        // const compare = await bcrypt.compare(req.body.password, password.password);
-        // req.body.password = compare;
+        let password = await db.query(`SELECT password FROM "Users" WHERE "Users".email = '${req.body.email}'`);
+        password = password.rows[0];
+        const compare = await bcrypt.compare(req.body.password, password.password);
+        req.body.password = compare;
         const user = req.body;
         const result = await userModel.loginUser(user);
 
