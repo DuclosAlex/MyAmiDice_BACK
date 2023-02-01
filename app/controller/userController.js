@@ -42,8 +42,13 @@ const userController = {
     async logUser ( req, res) {
 
         try {
-            let password = await db.query(`SELECT password FROM "Users" WHERE "Users".email = $1`, req.body.email);
-            console.log('password', password)
+
+            const sqlQuery = `SELECT password FROM "Users" WHERE "Users".email = $1`
+            const values = req.body.email;
+            console.log('email', req.body.email);
+
+            let password = await db.query(sqlQuery, values);
+        
             const compare = await bcrypt.compare(req.body.password, password.password);
             req.body.password = compare;
             console.log('compare', compare)
