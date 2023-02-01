@@ -47,6 +47,8 @@ const userController = {
             const values = [req.body.email];
 
             let password = await db.query(sqlQuery, values);
+
+            console.log('passwordRecup', password)
         
             const compare = await bcrypt.compare(req.body.password, password.password);
             req.body.password = compare;
