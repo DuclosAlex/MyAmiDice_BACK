@@ -58,6 +58,7 @@ const userController = {
             const user = req.body;
             console.log('user', user)
             const result = await userModel.loginUser(user);
+            console.log(result)
             if (result !== undefined) {
                 const token = jwt.sign({ userId: result.user.id}, process.env.TOKEN_KEY);
                 result.token = token;
