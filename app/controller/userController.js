@@ -2,6 +2,7 @@ const { userModel} = require('../model');
 const coreController = require('./coreController');
 const db = require('../model/dbClient');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const userController = {
 
@@ -51,7 +52,9 @@ const userController = {
             const token = jwt.sign({ userId: result.user.id}, process.env.TOKEN_KEY);
             result.token = token;
         res.json(result);
+
         }
+        
     }
 }
 

@@ -122,7 +122,10 @@ SELECT * FROM "Characters";
 -- Appele quand le users se connect et recupere ses info
 
 -- Appele quand le users se connect et recupere ses info
+<<<<<<< HEAD
 
+=======
+>>>>>>> bfb54152f213fda5a7d16956615d895fad462ec6
 CREATE OR REPLACE FUNCTION user_login(IN test_email email, IN test_password BOOLEAN)
 RETURNS TABLE("user" json) AS $$
  
