@@ -49,6 +49,7 @@ const userController = {
             let password = await db.query(sqlQuery, values);
 
             console.log('passwordRecup', password)
+            password = password.rows[0];
         
             const compare = await bcrypt.compare(req.body.password, password.password);
             req.body.password = compare;
