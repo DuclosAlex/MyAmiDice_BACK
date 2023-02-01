@@ -2,6 +2,7 @@ const { userModel} = require('../model');
 const coreController = require('./coreController');
 const db = require('../model/dbClient');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 const userController = {
 
@@ -24,8 +25,8 @@ const userController = {
 
     async updateUser( req, res) {
 
-        let salt = await bcrypt.genSalt(10)
-        req.body.password = await bcrypt.hash(req.body.password, salt) //verifié le nom envoyé par le front
+        //let salt = await bcrypt.genSalt(10)
+        //req.body.password = await bcrypt.hash(req.body.password, salt) //verifié le nom envoyé par le front
 
         const user = req.body;
 
@@ -36,17 +37,25 @@ const userController = {
 
     async logUser ( req, res) {
 
-        let password = await db.query(`SELECT password FROM "Users" WHERE "Users".email = '${req.body.email} '`);
-        password = password.rows[0];
-        const compare = await bcrypt.compare(req.body.password, password.password);
-        req.body.password = compare;
-        const user = req.body;
-        const result = await userModel.loginUser(user);
-        if (result !== undefined) {
-            const token = jwt.sign({ userId: result.user.id}, process.env.TOKEN_KEY);
-            result.token = token;
-        res.json(result);
+        try {
+            let password = await db.query(`SELECT password FROM "Users" WHERE "Users".email = '${req.body.email}'`);
+            password = password.rows[0];
+            const compare = await bcrypt.compare(req.body.password, password.password);
+            req.body.password = compare;
+            if (compare == false){
+                throw new Error
+            }
+            const user = req.body;
+            const result = await userModel.loginUser(user);
+            if (result !== undefined) {
+                const token = jwt.sign({ userId: result.user.id}, process.env.TOKEN_KEY);
+                result.token = token;
+            res.json(result);
+            };
+        } catch (error) {
+            console.log("Email ou mot de passe incorrecte",error);
         }
+        
     }
 }
 
