@@ -44,8 +44,7 @@ const userController = {
         try {
 
             const sqlQuery = `SELECT password FROM "Users" WHERE "Users".email = $1`
-            const values = req.body.email;
-            console.log('email', req.body.email);
+            const values = [req.body.email];
 
             let password = await db.query(sqlQuery, values);
         
