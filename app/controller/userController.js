@@ -11,11 +11,15 @@ const userController = {
     async createUser ( req, res ) {
 
         let salt = await bcrypt.genSalt(10)
-        req.body.password = await bcrypt.hash(req.body.password, salt)
+        req.body.password = await bcrypt.hash(req.body.password, salt);
+
+        console.log('bodyPassword', req.body)
 
         const user = req.body;
 
         const result = await userModel.insertUser(user);
+
+        console.log('result', result)
 
         console.log("resultC", result)
 
