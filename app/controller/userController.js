@@ -43,12 +43,9 @@ const userController = {
 
         try {
 
-            const sqlQuery = `SELECT password FROM "Users" WHERE "Users".email = $1`
-            const values = [req.body.email];
-
-            let password = await db.query(sqlQuery, values);
-
-            console.log('passwordRecup', password)
+            let password = await db.query(`SELECT password FROM "Users" WHERE "Users".email = '${req.body.email}'`);
+            password = password.rows[0]
+            console.log( password)
         
             const compare = await bcrypt.compare(req.body.password, password.password);
             req.body.password = compare;
@@ -57,6 +54,7 @@ const userController = {
             const user = req.body;
             console.log('user', user)
             const result = await userModel.loginUser(user);
+            console.log(result)
             if (result !== undefined) {
                 const token = jwt.sign({ userId: result.user.id}, process.env.TOKEN_KEY);
                 result.token = token;
