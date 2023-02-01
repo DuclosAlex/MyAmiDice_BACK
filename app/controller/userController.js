@@ -24,8 +24,8 @@ const userController = {
 
     async updateUser( req, res) {
 
-        let salt = await bcrypt.genSalt(10)
-        req.body.password = await bcrypt.hash(req.body.password, salt) //verifié le nom envoyé par le front
+        // let salt = await bcrypt.genSalt(10)
+        // req.body.password = await bcrypt.hash(req.body.password, salt) //verifié le nom envoyé par le front
 
         const user = req.body;
 
