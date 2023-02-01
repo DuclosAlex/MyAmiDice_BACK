@@ -36,16 +36,18 @@ const userController = {
 
     async logUser ( req, res) {
 
-        let password = await db.query(`SELECT password FROM "Users" WHERE "Users".email = '${req.body.email}'`);
+        let password = await db.query(`SELECT password FROM "Users" WHERE "Users".email = '${req.body.email} '`);
         password = password.rows[0];
         const compare = await bcrypt.compare(req.body.password, password.password);
         req.body.password = compare;
         const user = req.body;
         const result = await userModel.loginUser(user);
-
+        if (result !== undefined) {
+            const token = jwt.sign({ userId: result.user.id}, process.env.TOKEN_KEY);
+            result.token = token;
         res.json(result);
+        }
     }
-
 }
 
 module.exports = userController;
