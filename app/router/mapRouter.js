@@ -9,6 +9,6 @@ const router = express.Router();
 // router.get('', mapController.basicQuery.getAll);
 router.get('/:id', mapController.basicQuery.getById);
 router.delete( '/:id', mapController.basicQuery.deleteById);
-router.post('/:id', fileUpload.single('map'), mapController.basicQuery.createOrUpdate );
+router.post('/:id', fileUpload.single('map'), mapController.mapCreate );
 
 module.exports = router;
