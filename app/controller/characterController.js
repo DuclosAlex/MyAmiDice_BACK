@@ -18,10 +18,19 @@ const characterController = {
         const fullCharacters = [];
 
         console.log('body', req.body);
-
+        
+        if (req.file) {         //si j'ai un fichier alors je recup le req.body[0]
+            let character = req.body[0]; //je le nomme character
+            character.avatar = req.file.path;  //je donne a la clef avatar le chemin du fichier enregister
+        } else {    //si pas de fichier je ne fais rien et te laisse executer ton code
+        console.error("Aucun fichier n'a été trouvé dans la requête");
+            req.body //sans rien changer et tu utilise toujours character dans create du dessous
+            let character = req.body[0]
+        }
+        
         console.log('character', req.body[0])
 
-        const createCharacter = await characterModel.createOrUpdate("characters", req.body[0]);
+        const createCharacter = await characterModel.createOrUpdate("characters", req.body[0]); //et ici character a la place du req.body[0]
 
         console.log('characterbefore', createCharacter)
         
