@@ -88,6 +88,8 @@ const userModel = {
         try {
 
             const sqlQuery = ` SELECT * FROM user_login(  ${nbDollar.map( dollar => dollar)} )`;
+            console.log(sqlQuery)
+            console.log(values)
             
             const result = await db.query(sqlQuery, values);
 

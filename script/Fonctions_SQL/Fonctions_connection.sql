@@ -36,11 +36,7 @@ FROM (
 		) as Games_Invite
 	) as Games_Invite
 	FROM "Users" as us
-<<<<<<< HEAD
-	WHERE us."email" = test_email AND test_password = true;
-=======
 	WHERE us."email" = test_email AND test_password = true
->>>>>>> bfb54152f213fda5a7d16956615d895fad462ec6
 ) AS Joueurs;
 
 END;
