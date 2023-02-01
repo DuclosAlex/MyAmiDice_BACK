@@ -41,7 +41,7 @@ const userController = {
 
     async logUser ( req, res) {
 
-        let password = await db.query(`SELECT password FROM "Users" WHERE "Users".email = '${req.body.email} '`);
+        let password = await db.query(`SELECT password FROM "Users" WHERE "Users".email = $1`, req.body.email);
         password = password.rows[0];
 
         console.log('password', password)
