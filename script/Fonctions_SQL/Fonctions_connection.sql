@@ -42,6 +42,3 @@ FROM (
 END;
 
 $$ LANGUAGE plpgsql;
-
-
-
