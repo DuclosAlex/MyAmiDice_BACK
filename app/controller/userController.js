@@ -1,3 +1,8 @@
+/**
+ * Contrôleur pour les utilisateurs
+ * @module userController
+ */
+
 const { userModel} = require('../model');
 const coreController = require('./coreController');
 const db = require('../model/dbClient');
@@ -6,69 +11,76 @@ const jwt = require('jsonwebtoken');
 
 const userController = {
 
-    basicQuery : coreController.createBaseQuery( userModel, "users"),
+  /**
+   * Requête de base pour les utilisateurs
+   * @type {BaseQuery}
+   */
+  basicQuery: coreController.createBaseQuery(userModel, "users"),
 
-    async createUser ( req, res ) {
+  /**
+   * Permet de créer un utilisateur
+   * @function
+   * @async
+   * @param {Request} req - Objet Request
+   * @param {Response} res - Objet Response
+   * @returns {Promise<void>}
+   */
+  async createUser(req, res) {
+    let salt = await bcrypt.genSalt(10);
+    req.body.password = await bcrypt.hash(req.body.password, salt);
 
-        let salt = await bcrypt.genSalt(10)
-        req.body.password = await bcrypt.hash(req.body.password, salt);
+    const user = req.body;
 
-        console.log('bodyPassword', req.body)
+    const result = await userModel.insertUser(user);
 
-        const user = req.body;
+    res.json(result);
+  },
 
-        const result = await userModel.insertUser(user);
+  /**
+   * Permet de mettre à jour un utilisateur
+   * @function
+   * @async
+   * @param {Request} req - Objet Request
+   * @param {Response} res - Objet Response
+   * @returns {Promise<void>}
+   */
+  async updateUser(req, res) {
+    const user = req.body;
 
-        console.log('result', result)
+    const result = await userModel.updateUser(user);
 
-        console.log("resultC", result)
+    res.json(result);
+  },
 
-        res.json(result)
-    },
+  /**
+   * Permet de connecter un utilisateur
+   * @function
+   * @async
+   * @param {Request} req - Objet Request
+   * @param {Response} res - Objet Response
+   * @returns {Promise<void>}
+   */
+  async logUser(req, res) {
+    try {
+      const sqlQuery = `SELECT password FROM "Users" WHERE "Users".email = $1`;
+      const values = [req.body.email];
 
+      let password = await db.query(sqlQuery, values);
+      password = password.rows[0];
 
-    async updateUser( req, res) {
-
-        // let salt = await bcrypt.genSalt(10)
-        // req.body.password = await bcrypt.hash(req.body.password, salt) //verifié le nom envoyé par le front
-
-        const user = req.body;
-
-        const result = await userModel.updateUser(user);
-
+      const compare = await bcrypt.compare(req.body.password, password.password);
+      req.body.password = compare;
+      const user = req.body;
+      const result = await userModel.loginUser(user);
+      if (result !== undefined) {
+        const token = jwt.sign({ userId: result.user.id }, process.env.TOKEN_KEY);
+        result.token = token;
         res.json(result);
-    },
-
-    async logUser ( req, res) {
-
-        try {
-
-            const sqlQuery = `SELECT password FROM "Users" WHERE "Users".email = $1`
-            const values = [req.body.email];
-
-            let password = await db.query(sqlQuery, values);
-
-            console.log('passwordRecup', password)
-            password = password.rows[0];
-        
-            const compare = await bcrypt.compare(req.body.password, password.password);
-            req.body.password = compare;
-            console.log('compare', compare)
-            console.log('bodypassword', req.body.password)
-            const user = req.body;
-            console.log('user', user)
-            const result = await userModel.loginUser(user);
-            console.log(result)
-            if (result !== undefined) {
-                const token = jwt.sign({ userId: result.user.id}, process.env.TOKEN_KEY);
-                result.token = token;
-            res.json(result);
-            };
-        } catch (error) {
-            console.log("Email ou mot de passe incorrecte",error);
-        }
-        
+      }
+    } catch (error) {
+      console.log("Email ou mot de passe incorrecte", error);
     }
-}
+  }
+};
 
 module.exports = userController;

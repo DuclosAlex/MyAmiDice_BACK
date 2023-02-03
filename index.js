@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+
 const { characterRouter, userRouter, newsRouter, gameRouter, itemRouter, skillRouter, mapRouter, inviteRouter, characteristicRouter } = require('./app/router');
 const multer = require('multer');
 
@@ -8,8 +9,9 @@ const app = express();
 app.use(cors());
 
 app.use(express.json());
-
 app.use(express.urlencoded({extended : true}));
+
+app.use('/', express.static('public'));
 
 const bodyParser = multer();
 

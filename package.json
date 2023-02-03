@@ -10,6 +10,6 @@
     "pg": "^8.8.0"
   },
   "scripts": {
-    "build": "node index.js"
+    "dice": "node index.js"
   }
 }

@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const characterController = {
 
     basicQuery : coreController.createBaseQuery(characterModel, "characters"),
-
+    
     async getCharacterByIdWithAll( req, res) {
 
         if (jwt.verify(req.body.token, process.env.TOKEN_KEY)){
