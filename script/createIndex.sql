@@ -12,4 +12,3 @@ CREATE INDEX mapId ON "Maps" (id);
 CREATE INDEX newId ON "News" (id);
 
 COMMIT;
-
