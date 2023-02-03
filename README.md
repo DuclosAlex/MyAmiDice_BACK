@@ -1,6 +1,37 @@
-# projet-littleroll20_back
+# MyAmiDice
 
-Ce projet sert à alimenter un site fournissant les outils de mise en place et de gestion d'un partie d'un jeux de rôle papier.
-Pour la réalisation de cette API la base de données utilisée sera postgresQL.
-Nous avons fait le choix technique d'utiliser seulement des fonction sql pour nos appel à l'api.
-Pour la v01 l'idée de départ est de permettre à des amis conversants en audio (de leurs coté par exemple avec Discord...) de jouer une partie de jeux de role.
+MyAmiDice est un outil en ligne gratuit qui vous permet de jouer à des jeux de rôle papier avec d'autres joueurs à distance. Les fonctionnalités sont conçues pour vous fournir tout ce dont vous avez besoin pour jouer en ligne de manière simple et gratuite, comme si vous étiez autour d'une table.
+
+## Fonctionnalités du projet
+
+Le MVP de MyAmiDice inclut les fonctionnalités suivantes :
+
+- Création de compte
+- Connexion / déconnexion
+- Comptes :
+    - admin,
+    - visiteurs (compte non créé),
+    - user (MJ / Joueurs)
+- L’admin peut consulter / supprimer des utilisateurs / parties
+- L’admin peut rédiger des news consultables sur la page d’accueil
+- Comptes avec droits différents suivant la partie qui est rejointe (MJ / joueurs)
+- Le MJ invite des comptes à sa partie.
+- Création de parties (+ évolutions)
+- Création de personnage (style Formulaire pour commencer) (+ évolutions) :
+    - Sauvegarde des statistiques
+    - Le personnage est verrouillé pour une seule partie. Si la partie est clôturée, il devient exportable pendant une semaine(format à définir), puis est supprimé définitivement.
+- Affichage d’une carte commune (+ évolutions)
+- Lancer de dés qui affiche le résultat dans le tchat :
+    - lancer public par les joueurs et le MJ,
+    - lancer privé d’un joueur au MJ,
+    - lancer privé du MJ visible par lui et le joueur concerné,
+    - lancer privé du MJ visible uniquement par lui
+- Tchat en temps réel : (+ évolutions)
+    - système de MP au MJ,
+- Section “Notes” qui permet au MJ d’écrire un résumé de chaque partie. Permet d’avoir le résumé de l’histoire du départ jusqu’au moment présent.
+- Côté responsive Mobiles / tablettes : version bridée du site de base : uniquement accès aux fiches de perso en temps réel.
+
+## Comment lancer le projet
+
+1. Assurez-vous d'avoir installé les dépendances requises en utilisant la commande `npm install`
+2. Utilisez la commande `npm run dice` pour lancer le projet.
