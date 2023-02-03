@@ -31,6 +31,18 @@ Le MVP de MyAmiDice inclut les fonctionnalités suivantes :
 - Section “Notes” qui permet au MJ d’écrire un résumé de chaque partie. Permet d’avoir le résumé de l’histoire du départ jusqu’au moment présent.
 - Côté responsive Mobiles / tablettes : version bridée du site de base : uniquement accès aux fiches de perso en temps réel.
 
+## Technologies utilisées
+
+- Node.js
+- Express
+- bcrypt
+- cors
+- dotenv
+- Joi
+- JSONWebToken
+- Multer
+- PostgreSQL
+
 ## Comment lancer le projet
 
 1. Assurez-vous d'avoir installé les dépendances requises en utilisant la commande `npm install`
