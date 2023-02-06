@@ -43,8 +43,8 @@ BEGIN
 						WHERE "Characteristics".character_id = "Characters".id
 					) AS "Characteristics"
 				) AS "Characteristics"
-				FROM "Characters" FULL JOIN "Users" ON "Users".id = "Characters".user_id
-				WHERE "Characters".user_id = "Users".id
+				FROM "Characters"
+				WHERE "Characters".game_id = gameid
 			)AS Personnages
 		) AS Personnages
 		FROM "Games"
@@ -92,9 +92,8 @@ BEGIN
 						WHERE "Characteristics".character_id = "Characters".id
 					) AS Stats
 				) AS Stats
-				FROM "Characters" FULL JOIN "Users" ON "Users".id = "Characters".user_id
-				WHERE "Characters".user_id = "Users".id
-				AND "Characters".user_id = userid
+				FROM "Characters"
+				WHERE "Characters".user_id = userid
 			)AS Personnages
 		) AS Personnages
 		FROM "Games"

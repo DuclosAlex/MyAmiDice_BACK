@@ -178,7 +178,6 @@ SELECT create_or_update_game_with_result(1,'maGame2',4, ' ', 'break',4); -- Upda
 SELECT * FROM "Games"
 
 */
-
 CREATE OR REPLACE FUNCTION get_game_by_id_with_all(
 	IN gameid INT,
 	IN userid INT
@@ -224,8 +223,8 @@ BEGIN
 						WHERE "Characteristics".character_id = "Characters".id
 					) AS "Characteristics"
 				) AS "Characteristics"
-				FROM "Characters" FULL JOIN "Users" ON "Users".id = "Characters".user_id
-				WHERE "Characters".user_id = "Users".id
+				FROM "Characters"
+				WHERE "Characters".game_id = gameid
 			)AS Personnages
 		) AS Personnages
 		FROM "Games"
@@ -273,9 +272,8 @@ BEGIN
 						WHERE "Characteristics".character_id = "Characters".id
 					) AS Stats
 				) AS Stats
-				FROM "Characters" FULL JOIN "Users" ON "Users".id = "Characters".user_id
-				WHERE "Characters".user_id = "Users".id
-				AND "Characters".user_id = userid
+				FROM "Characters"
+				WHERE "Characters".user_id = userid
 			)AS Personnages
 		) AS Personnages
 		FROM "Games"
