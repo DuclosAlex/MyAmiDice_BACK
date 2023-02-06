@@ -8,7 +8,7 @@ RETURNS TABLE( "character" json) AS $$
 BEGIN
 	RETURN QUERY SELECT row_to_json(Charac) as "character"
 	FROM (
-	SELECT "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters".is_alive, "Characters"."class", "Characters"."description", "Characters"."avatar", (
+	SELECT "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters".is_alive, "Characters"."class", "Characters"."description", "Characters"."avatar", "Characters"."game_id" (
 		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT id, "name", "description") temptable))) FROM "Skills" WHERE "Characters".id = "Skills".character_id
 		) skills, (
 		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT id, "name", "quantity", "description") temptable))) FROM "Items" WHERE "Characters".id = "Items".character_id
