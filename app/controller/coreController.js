@@ -20,8 +20,18 @@ const coreController = {
        */
       getAll: async (req, res) => {
         try {
-          const result = await model.getAll(table);
-          res.json(result);
+          if (table == "news") {
+            const result = await model.getAll(table);
+            res.json(result);
+          } else {
+            if ((jwt.verify(req.headers.token, process.env.TOKEN_KEY) && (jwt.verify(req.headers.token, process.env.TOKEN_KEY).userIsAdmin == true))) {
+              console.log(jwt.verify(req.headers.token, process.env.TOKEN_KEY))
+              const result = await model.getAll(table);
+              res.json(result);
+            } else {
+              throw new Error ("Vous n'etes pas contecter en admin")
+            }
+          }
         } catch (e) {
           console.log(e.error);
         }
@@ -53,12 +63,18 @@ const coreController = {
        */
 
       deleteById: async (req, res) => {
-        try {
+        if ((news == "news") && (jwt.verify(req.headers.token, process.env.TOKEN_KEY).userIsAdmin == true)) {
           const id = req.params.id;
           const result = await model.deleteById(table, id);
           res.json(result);
-        } catch (e) {
-          console.log(e.error);
+        } else {
+          try {
+            const id = req.params.id;
+            const result = await model.deleteById(table, id);
+            res.json(result);
+          } catch (e) {
+            console.log(e.error);
+          }
         }
       },
 
@@ -82,4 +98,4 @@ const coreController = {
   },
 };
 
-module.exports
+module.exports = coreController
