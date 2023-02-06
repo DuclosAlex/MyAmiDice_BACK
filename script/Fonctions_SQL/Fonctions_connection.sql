@@ -28,7 +28,7 @@ FROM (
 	(
 		SELECT json_agg(Games_Invite)
 		FROM (
-			SELECT gi."name", "Invite"."id",gi."description", uj."pseudo", "Invite".game_id
+			SELECT gi."name", gi."user_id", "Invite"."id",gi."description", uj."pseudo", "Invite".game_id
 			FROM "Invite"
 			LEFT JOIN "Games" as gi ON "Invite".game_id = gi.id
 			LEFT JOIN "Users" as uj ON gi.user_id = uj.id

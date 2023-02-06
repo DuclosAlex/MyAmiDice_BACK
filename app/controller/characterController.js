@@ -1,6 +1,5 @@
 const { characterModel, characteristicModel } = require('../model');
 const coreController = require('./coreController');
-const jwt = require('jsonwebtoken')
 
 const characterController = {
 
@@ -8,11 +7,9 @@ const characterController = {
     
     async getCharacterByIdWithAll( req, res) {
 
-        if (jwt.verify(req.body.token, process.env.TOKEN_KEY)){
             const result = await characterModel.getCharacterByIdWithAll(req.params.id);
 
             res.json(result);  
-        }
         
     },
 

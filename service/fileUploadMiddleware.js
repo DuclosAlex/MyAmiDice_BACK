@@ -1,4 +1,7 @@
+const multer = require('multer')
 /**
+ * 
+ * 
  * @typedef {import('multer').DiskStorage} DiskStorage
  * @typedef {import('multer').Instance} MulterInstance
  *

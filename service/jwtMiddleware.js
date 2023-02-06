@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 /**
  * Ce middleware permet de vérifier la validité du token JSON Web Token (JWT) fourni dans les headers de la requête.
  * S'il n'y a pas de token, une erreur 401 avec un message "Aucun token n'a été fourni" sera renvoyée.
@@ -20,6 +21,7 @@ const jwtMiddleware = (req, res, next) => {
   
     try {
       jwt.verify(token, process.env.TOKEN_KEY);
+      
       next();
     } catch (err) {
       return res.status(401).json({ msg: 'Token non valide' });

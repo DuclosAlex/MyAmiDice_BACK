@@ -1,9 +1,11 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const jwt = require('./service/jwtMiddleware');
 
 const { characterRouter, userRouter, newsRouter, gameRouter, itemRouter, skillRouter, mapRouter, inviteRouter, characteristicRouter } = require('./app/router');
 const multer = require('multer');
+const { compareSync } = require('bcrypt');
 
 const app = express();
 app.use(cors());
@@ -17,8 +19,10 @@ const bodyParser = multer();
 
 app.use(bodyParser.none());
 
-app.use('/characters', characterRouter);
 app.use('/users', userRouter);
+app.use('/news', newsRouter);
+app.use(jwt);
+app.use('/characters', characterRouter);
 app.use('/news', newsRouter);
 app.use('/games', gameRouter);
 app.use('/items', itemRouter);
