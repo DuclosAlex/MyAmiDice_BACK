@@ -5,7 +5,7 @@ const mapController = {
 
     basicQuery : coreController.createBaseQuery(mapModel, "maps"),
 
-    async mapCreate ( req, res) {
+    async mapCreate ( req, res, next) {
 
         let map;
 

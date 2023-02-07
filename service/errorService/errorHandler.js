@@ -21,6 +21,12 @@ const errorHandler = {
         next(error);
     },
 
+    _401(_, __, next) {
+
+        const error = new apiError("Désolé, vous n'êtes pas authentifié", 401);
+        next(error);
+    },
+
     _403(_, __, next) {
         const error = new apiError("Désolé, vous n'avez pas les droits requis", 403);
         next(error);

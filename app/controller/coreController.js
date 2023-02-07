@@ -24,20 +24,17 @@ const coreController = {
        */
       getAll: async (req, res, next) => {
         try {
-          if (table == "news") {
-            const result = await model.getAll(table);
+          
+          const result = await model.getAll(table);
+
+          if(result) {
+
             res.json(result);
           } else {
-            if ((jwt.verify(req.headers.token, process.env.TOKEN_KEY) && (jwt.verify(req.headers.token, process.env.TOKEN_KEY).userIsAdmin == true))) {
-              console.log(jwt.verify(req.headers.token, process.env.TOKEN_KEY))
-              const result = await model.getAll(table);
-              res.json(result);
-            } else {
-              throw new Error ("Vous n'etes pas contecter en admin")
-            }
+            errorHandler._204(req, res, next);
           }
-        } catch (e) {
           
+        } catch (e) {         
           errorHandler._500(req, res, next);
         }
       },
@@ -59,7 +56,6 @@ const coreController = {
             const result = await model.getById(table, id);
 
             if(result) {
-
               res.json(result);
             }else {
               errorHandler._204(req, res, next)
@@ -68,7 +64,6 @@ const coreController = {
           } else {
             errorHandler._400(req, res, next)
           }
-
         } catch (e) {
           errorHandler._500(req, res, next);
         }
@@ -84,18 +79,52 @@ const coreController = {
        */
 
       deleteById: async (req, res) => {
-        if ((news == "news") && (jwt.verify(req.headers.token, process.env.TOKEN_KEY).userIsAdmin == true)) {
-          const id = req.params.id;
-          const result = await model.deleteById(table, id);
-          res.json(result);
-        } else {
-          try {
-            const id = req.params.id;
-            const result = await model.deleteById(table, id);
-            res.json(result);
-          } catch (e) {
-            console.log(e.error);
+        try {
+
+          if (table == "news" || table == "users") {
+            if(jwt.verify(req.headers.token, process.env.TOKEN_KEY).userIsAdmin == true) {
+
+              if(req.params.id) {
+
+                const id = Number(req.params.id);
+                const result = await model.deleteById(table, id);
+                if(result) {
+                  
+                  res.json(result);
+                } else {
+                  errorHandler._204(req, res, next);
+                }
+              } else {
+                errorHandler._400(req, res, next);
+              }
+            } else {
+              errorHandler._403(req, res, next);
+            }
+        
+          } else {
+
+            if(jwt.verify(req.headers.token, process.env.TOKEN_KEY)) {
+
+              if(req.params.id) {
+
+                const id = Number(req.params.id);
+                const result = await model.deleteById(table, id);
+                if(result) {
+                  
+                  res.json(result);
+                } else {
+                  errorHandler._204(req, res, next);
+                }
+              } else {
+                errorHandler._400(req, res, next);
+              }
+            } else {
+              errorHandler._401(req, res, next);
+            }
+
           }
+        } catch(e) {
+          errorHandler._500(req, res, next);
         }
       },
 
@@ -110,15 +139,51 @@ const coreController = {
       createOrUpdate: async (req, res, next) => {
         try {
 
+          if(table == "news") {
 
-          let data = req.body;
-          const result = await model.createOrUpdate(table, data);
+            if(jwt.verify(req.headers.token, process.env.TOKEN_KEY).userIsAdmin == true) {
 
-          if(result) {
+              let data = req.body;
+              
+              if(data) {
+                
+                const result = await model.createOrUpdate(table, data);
+                
+                if(result) {
+                  
+                  res.json(result);
+                } else {
+                  errorHandler._204(req, res, next);
+                }
+              } else {
+                errorHandler._400(req, res, next);
+              }
+            } else {
+              errorHandler._403(req, res, next);
+            }
 
-            res.json(result);
           } else {
-            errorHandler._204(req, res, next);
+
+            if(jwt.verify(req.headers.token, process.env.TOKEN_KEY)) {
+              
+              let data = req.body;
+              
+              if(data) {
+                
+                const result = await model.createOrUpdate(table, data);
+                
+                if(result) {
+                  
+                  res.json(result);
+                } else {
+                  errorHandler._204(req, res, next);
+                }
+              } else {
+                errorHandler._400(req, res, next);
+              }
+            } else {
+              errorHandler._401(req, res, next)
+            }
           }
         } catch (e) {
           errorHandler._500(req, res, next);

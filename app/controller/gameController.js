@@ -24,7 +24,7 @@ const gameController = {
             }
         } catch(e) {
             
-            errorHandler._500();
+            errorHandler._500(res, res, next);
         }
 
     }
