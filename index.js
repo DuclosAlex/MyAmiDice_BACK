@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const errorHandler = require('./service/errorService/errorHandler.js')
 
 const { characterRouter, userRouter, newsRouter, gameRouter, itemRouter, skillRouter, mapRouter, inviteRouter, characteristicRouter } = require('./app/router');
 const multer = require('multer');
@@ -26,6 +27,10 @@ app.use('/skills', skillRouter);
 app.use('/maps', mapRouter);
 app.use('/invites', inviteRouter);
 app.use('/characteristics', characteristicRouter);
+
+app.use(errorHandler._404);
+
+app.use(errorHandler.manage);
 
 const port = process.env.PORT || 3000;
 

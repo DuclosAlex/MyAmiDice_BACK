@@ -82,4 +82,4 @@ const coreController = {
   },
 };
 
-module.exports
+module.exports = coreController;
