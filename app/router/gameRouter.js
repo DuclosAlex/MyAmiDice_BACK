@@ -1,5 +1,6 @@
 const express = require('express');
 const { gameController } = require('../controller');
+const errorHandler = require('../../service/errorService/errorHandler');
 
 const router = express.Router();
 

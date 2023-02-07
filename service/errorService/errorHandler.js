@@ -3,40 +3,36 @@ const apiError = require('./apiError');
 const errorHandler = {
 
     
-    manage(err, req, res, _) {
+    manage(err, _, res, __) {
 
-        if(err.code) {
-            res.status(err.code).json(err.message);
-        }
-        else {
-           res.status(500).json(err.message);
-        }
+        console.log(err.message)
+        res.status(err.code).json({"err" : err.message });
     },
 
-    throw( err, code) {
-        throw new apiError(err, code);
+    _204 (_, __, next) {
+        
+        const error = new apiError("Désolé, le contenu n'existe pas", 204);
+        next(error);
     },
 
-    _204 () {
-         errorHandler.throw(204, "Désolé, mais nous n'avons pas trouvé de contenu");
+    _400 (_, __, next) {
+
+        const error = new apiError("Désolé, la requête est mal formulé", 400);
+        next(error);
     },
 
-    _400 () {
-        errorHandler.throw(400, "Désolé, votre demande n'est pas valide ")
-    },
-
-    _403() {
-        errorHandler.throw(403, "Désolé, vous n'avez pas l'autorisation d'accèder à ce contenu");
+    _403(_, __, next) {
+        const error = new apiError("Désolé, vous n'avez pas les droits requis", 403);
+        next(error);
     },
 
     _404() {
-
-        errorHandler.throw(404, "Page non trouvée");
+        throw new apiError("Désolé, page non trouvé", 404);
     },
 
-    _500 () {
-
-        errorHandler.throw(500, "Désolé, le système à fait un échec critique")
+    _500 (_, __, next) {
+        const error = new apiError("Désolé, le système à connu un échec critique", 500);
+        next(error);
     },
 
 }

@@ -1,7 +1,6 @@
 const coreModel = require('./coreModel');
 const db = require('./dbClient');
 
-
 const gameModel = {
 
     ...coreModel,
@@ -9,8 +8,6 @@ const gameModel = {
     async getGameByIdWithAll (gameID, userID) { //on attend 2 variable dans la fonction
 
         let gameWithAll;
-
-        try {
 
             const sqlQuery = ` SELECT * FROM get_game_by_id_with_all($1, $2)`; // a mon avis on attend aussi $2
             // il faudra probablement bouclé ici pour prendre les 2 id en number et les mettre dans le tableau
@@ -27,9 +24,6 @@ const gameModel = {
 
             console.log("game", gameWithAll);
 
-        } catch(e) {
-            console.log("error", e);
-        }
 
         return gameWithAll;
     }
