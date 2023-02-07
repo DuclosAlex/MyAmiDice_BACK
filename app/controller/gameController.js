@@ -8,16 +8,23 @@ const gameController = {
 
     async getGameByIdWithAll( req, res, next) {
 
-        const result = await gameModel.getGameByIdWithAll(req.params.id, req.params.userid);
+        try {
 
-        if(result) {
-
-            res.json(result);
-
-        } else {
-
-            errorHandler._204(req, res, next);
-
+            
+            const result = await gameModel.getGameByIdWithAll(req.params.id, req.params.userid);
+            
+            if(result) {
+                
+                res.json(result);
+                
+            } else {
+                
+                errorHandler._204(req, res, next);
+                
+            }
+        } catch(e) {
+            
+            errorHandler._500();
         }
 
     }

@@ -3,7 +3,7 @@ const apiError = require('./apiError');
 const errorHandler = {
 
     
-    manage(err, req, res, _) {
+    manage(err, _, res, __) {
 
         console.log(err.message)
         res.status(err.code).json({"err" : err.message });
@@ -15,13 +15,13 @@ const errorHandler = {
         next(error);
     },
 
-    _400 () {
+    _400 (_, __, next) {
 
         const error = new apiError("Désolé, la requête est mal formulé", 400);
         next(error);
     },
 
-    _403() {
+    _403(_, __, next) {
         const error = new apiError("Désolé, vous n'avez pas les droits requis", 403);
         next(error);
     },
@@ -30,7 +30,7 @@ const errorHandler = {
         throw new apiError("Désolé, page non trouvé", 404);
     },
 
-    _500 () {
+    _500 (_, __, next) {
         const error = new apiError("Désolé, le système à connu un échec critique", 500);
         next(error);
     },
