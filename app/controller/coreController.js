@@ -19,7 +19,7 @@ const coreController = {
        * @async
        * @param {Object} req - L'objet de requête entrant.
        * @param {Object} res - L'objet de réponse sortant.
-       * @param {Object} next - Pour permettre de passer au middleware suivant
+       * @param {Object} next - permet de passer au middleware suivant
        * @description Récupère tous les enregistrements de la table spécifiée et retourne le résultat sous forme d'objet JSON.
        */
       getAll: async (req, res, next) => {
@@ -27,15 +27,10 @@ const coreController = {
           
           const result = await model.getAll(table);
 
-          if(result) {
+          res.json(result);
 
-            res.json(result);
-          } else {
-            errorHandler._204(req, res, next);
-          }
-          
         } catch (e) {         
-          errorHandler._500(req, res, next);
+          next(e)
         }
       },
 
@@ -44,28 +39,19 @@ const coreController = {
        * @async
        * @param {Object} req - L'objet de requête entrant.
        * @param {Object} res - L'objet de réponse sortant.
-       * @param {Object} next - Pour permettre de passer au middleware suivant
+       * @param {Object} next - Permet de passer au middleware suivant
        * @description Récupère un seul enregistrement de la table spécifiée en fonction de l'identifiant dans les paramètres de la requête et retourne le résultat sous forme d'objet JSON.
        */
       getById: async (req, res, next) => {
         try {
 
-          if (req.params.id) {
+          const id = Number(req.params.id);
+          const result = await model.getById(table, id);
 
-            const id = Number(req.params.id);
-            const result = await model.getById(table, id);
+          res.json(result);
 
-            if(result) {
-              res.json(result);
-            }else {
-              errorHandler._204(req, res, next)
-            }
-
-          } else {
-            errorHandler._400(req, res, next)
-          }
         } catch (e) {
-          errorHandler._500(req, res, next);
+          next(e);
         }
       },
 
@@ -78,53 +64,31 @@ const coreController = {
        * @description Supprime un seul enregistrement de la table spécifiée en fonction de l'identifiant dans les paramètres de la requête et retourne le résultat sous forme d'objet JSON.
        */
 
-      deleteById: async (req, res) => {
+      deleteById: async (req, res, next) => {
         try {
 
           if (table == "news" || table == "users") {
             if(jwt.verify(req.headers.token, process.env.TOKEN_KEY).userIsAdmin == true) {
 
-              if(req.params.id) {
 
-                const id = Number(req.params.id);
-                const result = await model.deleteById(table, id);
-                if(result) {
-                  
-                  res.json(result);
-                } else {
-                  errorHandler._204(req, res, next);
-                }
-              } else {
-                errorHandler._400(req, res, next);
-              }
-            } else {
-              errorHandler._403(req, res, next);
-            }
+              const id = Number(req.params.id);
+              const result = await model.deleteById(table, id);
+
+              res.json(result);
         
           } else {
 
             if(jwt.verify(req.headers.token, process.env.TOKEN_KEY)) {
 
-              if(req.params.id) {
+              const id = Number(req.params.id);
+              const result = await model.deleteById(table, id);
 
-                const id = Number(req.params.id);
-                const result = await model.deleteById(table, id);
-                if(result) {
-                  
-                  res.json(result);
-                } else {
-                  errorHandler._204(req, res, next);
-                }
-              } else {
-                errorHandler._400(req, res, next);
+              res.json(result);
               }
-            } else {
-              errorHandler._401(req, res, next);
             }
-
           }
         } catch(e) {
-          errorHandler._500(req, res, next);
+          next(e);
         }
       },
 
@@ -144,22 +108,11 @@ const coreController = {
             if(jwt.verify(req.headers.token, process.env.TOKEN_KEY).userIsAdmin == true) {
 
               let data = req.body;
-              
-              if(data) {
-                
-                const result = await model.createOrUpdate(table, data);
-                
-                if(result) {
-                  
-                  res.json(result);
-                } else {
-                  errorHandler._204(req, res, next);
-                }
-              } else {
-                errorHandler._400(req, res, next);
-              }
-            } else {
-              errorHandler._403(req, res, next);
+    
+              const result = await model.createOrUpdate(table, data);
+
+              res.json(result);
+
             }
 
           } else {
@@ -167,26 +120,14 @@ const coreController = {
             if(jwt.verify(req.headers.token, process.env.TOKEN_KEY)) {
               
               let data = req.body;
-              
-              if(data) {
-                
-                const result = await model.createOrUpdate(table, data);
-                
-                if(result) {
-                  
-                  res.json(result);
-                } else {
-                  errorHandler._204(req, res, next);
-                }
-              } else {
-                errorHandler._400(req, res, next);
-              }
-            } else {
-              errorHandler._401(req, res, next)
+
+              const result = await model.createOrUpdate(table, data);
+
+              res.json(result);
             }
-          }
+          }            
         } catch (e) {
-          errorHandler._500(req, res, next);
+          next(e);
         }
       },
     };

@@ -24,17 +24,12 @@ const userController = {
    * @async
    * @param {Request} req - Objet Request
    * @param {Response} res - Objet Response
-   * @param {Next} next - Permet de passer au middleware suivant
+   * @param {Object} next - Permet de passer au middleware suivant
    * @returns {Promise<void>}
    */
   async createUser(req, res, next) {
 
     try {
-
-      
-      if(!req.body) {
-        errorHandler._400(req, res, next);
-      }
       
       let salt = await bcrypt.genSalt(10);
       req.body.password = await bcrypt.hash(req.body.password, salt);
@@ -43,14 +38,10 @@ const userController = {
       
       const result = await userModel.insertUser(user);
       
-      if(!result) {
-        errorHandler._204(req, res, next);
-      }
-      
       res.json(result);
 
     } catch(e) {
-      errorHandler._500(req, res, next);
+      next(e);
     }
   },
 
@@ -60,7 +51,7 @@ const userController = {
    * @async
    * @param {Request} req - Objet Request
    * @param {Response} res - Objet Response
-   * @param {Next} next - Permet de passer au middleware suivant
+   * @param {Object} next - Permet de passer au middleware suivant
    * @returns {Promise<void>}
    */
   async updateUser(req, res, next) {
@@ -70,24 +61,15 @@ const userController = {
       if(jwt.verify(req.headers.token, process.env.TOKEN_KEY)) {
 
         
-        if(!req.body) {
-          errorHandler._400(req, res, next);
-        }
         const user = req.body;
         
         const result = await userModel.updateUser(user);
         
-        if(!result) {
-          errorHandler._204(req, res, next);
-        }
-        
         res.json(result);
-      } else {
-        errorHandler._401(req, res, next);
       }
 
     } catch(e) {
-      errorHandler._500(req, res, next);
+      next(e);
     }
   },
 
@@ -97,23 +79,17 @@ const userController = {
    * @async
    * @param {Request} req - Objet Request
    * @param {Response} res - Objet Response
-   * @param {Next} next - Permet de passer au middleware suivant
+   * @param {Object} next - Permet de passer au middleware suivant
    * @returns {Promise<void>}
    */
   async logUser(req, res, next) {
     try {
 
-      if(!req.body) {
-        errorHandler._400(req, res, next);
-      }
       const sqlQuery = `SELECT password FROM "Users" WHERE "Users".email = $1`;
       const values = [req.body.email];
 
       let password = await db.query(sqlQuery, values);
 
-      if(!password) {
-        errorHandler._204(req, res, next);
-      }
       password = password.rows[0];
 
       const compare = await bcrypt.compare(req.body.password, password.password);
@@ -124,11 +100,9 @@ const userController = {
         const token = jwt.sign({ userIsAdmin: result.user.is_admin }, process.env.TOKEN_KEY);
         result.token = token;
         res.json(result);
-      } else {
-        errorHandler._204(req, res, next);
       }
     } catch (e) {
-      errorHandler._500(req, res, next);
+      next(e)
     }
   }
 };

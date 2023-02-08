@@ -9,7 +9,6 @@ const jwt = require('jsonwebtoken');
  * @async
  * @param {Object} req - L'objet request fourni par Express
  * @param {Object} res - L'objet response fourni par Express
- * @param {Function} next - La fonction permettant de passer à la prochaine étape de traitement de la requête
  * @throws {Error} Si une erreur est levée lors de la vérification du token
  * @returns {undefined}
  */
