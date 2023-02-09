@@ -55,43 +55,35 @@ const coreModel = {
    * @description Cette fonction permet de créer ou de mettre à jour un enregistrement dans la table spécifiée en utilisant les données fournies.
    */
   async createOrUpdate ( table, data) {
-
-        try {
-
-            
-            let values = [];
-            let nbDollar = [];
-            let counter = 1;
-            
-            console.log('dataModel', table)
-            console.log('dataModel', data)
-            
-            for( key in data) {
-                
-                console.log("key", key);
-                
-                values.push(data[key]);
-                nbDollar.push(`$${counter}`)
-                counter++;
-            };
-            
-            console.log("values", values);
-            console.log("nbDollar", nbDollar);
-            
-            let query = ` SELECT * FROM create_or_update_${table}_with_result( ${nbDollar.map( dollar => dollar)} ) `;
-            
-            console.log('query', query);
-            
-            const result = await db.query(query,  values );
-            
-            console.log("result", result)
-            
-            return result.rows[0];
-
-        } catch(e) {
-
-            console.log("error", e)
-        }
+  
+    let values = [];
+    let nbDollar = [];
+    let counter = 1;
+    
+    console.log('dataModel', table)
+    console.log('dataModel', data)
+    
+    for( key in data) {
+        
+      console.log("key", key);
+      
+      values.push(data[key]);
+      nbDollar.push(`$${counter}`)
+      counter++;
+    };
+    
+    console.log("values", values);
+    console.log("nbDollar", nbDollar);
+    
+    let query = ` SELECT * FROM create_or_update_${table}_with_result( ${nbDollar.map( dollar => dollar)} ) `;
+    
+    console.log('query', query);
+    
+    const result = await db.query(query,  values );
+    
+    console.log("result", result)
+    
+    return result.rows[0];
     }
         
 }

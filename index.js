@@ -23,7 +23,6 @@ app.use('/users', userRouter);
 app.use('/news', newsRouter);
 app.use(jwt);
 app.use('/characters', characterRouter);
-app.use('/news', newsRouter);
 app.use('/games', gameRouter);
 app.use('/items', itemRouter);
 app.use('/skills', skillRouter);

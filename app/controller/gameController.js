@@ -9,22 +9,13 @@ const gameController = {
     async getGameByIdWithAll( req, res, next) {
 
         try {
-
             
             const result = await gameModel.getGameByIdWithAll(req.params.id, req.params.userid);
-            
-            if(result) {
+   
+            res.json(result);
                 
-                res.json(result);
-                
-            } else {
-                
-                errorHandler._204(req, res, next);
-                
-            }
         } catch(e) {
-            
-            errorHandler._500();
+            next(e);
         }
 
     }

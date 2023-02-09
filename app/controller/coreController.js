@@ -19,26 +19,18 @@ const coreController = {
        * @async
        * @param {Object} req - L'objet de requête entrant.
        * @param {Object} res - L'objet de réponse sortant.
-       * @param {Object} next - Pour permettre de passer au middleware suivant
+       * @param {Object} next - permet de passer au middleware suivant
        * @description Récupère tous les enregistrements de la table spécifiée et retourne le résultat sous forme d'objet JSON.
        */
       getAll: async (req, res, next) => {
         try {
-          if (table == "news") {
-            const result = await model.getAll(table);
-            res.json(result);
-          } else {
-            if ((jwt.verify(req.headers.token, process.env.TOKEN_KEY) && (jwt.verify(req.headers.token, process.env.TOKEN_KEY).userIsAdmin == true))) {
-              console.log(jwt.verify(req.headers.token, process.env.TOKEN_KEY))
-              const result = await model.getAll(table);
-              res.json(result);
-            } else {
-              throw new Error ("Vous n'etes pas contecter en admin")
-            }
-          }
-        } catch (e) {
           
-          errorHandler._500(req, res, next);
+          const result = await model.getAll(table);
+
+          res.json(result);
+
+        } catch (e) {         
+          next(e)
         }
       },
 
@@ -47,30 +39,19 @@ const coreController = {
        * @async
        * @param {Object} req - L'objet de requête entrant.
        * @param {Object} res - L'objet de réponse sortant.
-       * @param {Object} next - Pour permettre de passer au middleware suivant
+       * @param {Object} next - Permet de passer au middleware suivant
        * @description Récupère un seul enregistrement de la table spécifiée en fonction de l'identifiant dans les paramètres de la requête et retourne le résultat sous forme d'objet JSON.
        */
       getById: async (req, res, next) => {
         try {
 
-          if (req.params.id) {
+          const id = Number(req.params.id);
+          const result = await model.getById(table, id);
 
-            const id = Number(req.params.id);
-            const result = await model.getById(table, id);
-
-            if(result) {
-
-              res.json(result);
-            }else {
-              errorHandler._204(req, res, next)
-            }
-
-          } else {
-            errorHandler._400(req, res, next)
-          }
+          res.json(result);
 
         } catch (e) {
-          errorHandler._500(req, res, next);
+          next(e);
         }
       },
 
@@ -83,19 +64,31 @@ const coreController = {
        * @description Supprime un seul enregistrement de la table spécifiée en fonction de l'identifiant dans les paramètres de la requête et retourne le résultat sous forme d'objet JSON.
        */
 
-      deleteById: async (req, res) => {
-        if ((news == "news") && (jwt.verify(req.headers.token, process.env.TOKEN_KEY).userIsAdmin == true)) {
-          const id = req.params.id;
-          const result = await model.deleteById(table, id);
-          res.json(result);
-        } else {
-          try {
-            const id = req.params.id;
-            const result = await model.deleteById(table, id);
-            res.json(result);
-          } catch (e) {
-            console.log(e.error);
+      deleteById: async (req, res, next) => {
+        try {
+
+          if (table == "news" || table == "users") {
+            if(jwt.verify(req.headers.token, process.env.TOKEN_KEY).userIsAdmin == true) {
+
+
+              const id = Number(req.params.id);
+              const result = await model.deleteById(table, id);
+
+              res.json(result);
+        
+          } else {
+
+            if(jwt.verify(req.headers.token, process.env.TOKEN_KEY)) {
+
+              const id = Number(req.params.id);
+              const result = await model.deleteById(table, id);
+
+              res.json(result);
+              }
+            }
           }
+        } catch(e) {
+          next(e);
         }
       },
 
@@ -110,18 +103,31 @@ const coreController = {
       createOrUpdate: async (req, res, next) => {
         try {
 
+          if(table == "news") {
 
-          let data = req.body;
-          const result = await model.createOrUpdate(table, data);
+            if(jwt.verify(req.headers.token, process.env.TOKEN_KEY).userIsAdmin == true) {
 
-          if(result) {
+              let data = req.body;
+    
+              const result = await model.createOrUpdate(table, data);
 
-            res.json(result);
+              res.json(result);
+
+            }
+
           } else {
-            errorHandler._204(req, res, next);
-          }
+
+            if(jwt.verify(req.headers.token, process.env.TOKEN_KEY)) {
+              
+              let data = req.body;
+
+              const result = await model.createOrUpdate(table, data);
+
+              res.json(result);
+            }
+          }            
         } catch (e) {
-          errorHandler._500(req, res, next);
+          next(e);
         }
       },
     };
