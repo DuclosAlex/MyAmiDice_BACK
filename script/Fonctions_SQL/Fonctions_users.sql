@@ -73,4 +73,4 @@ $$ LANGUAGE SQL;
 CREATE OR REPLACE FUNCTION get_pasword( email TEXT)
 RETURNS TEXT AS $$ 
     SELECT password FROM "Users" WHERE email = $1;
-$$ LANGAGE SQL;
+$$ LANGUAGE SQL;

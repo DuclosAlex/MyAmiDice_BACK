@@ -30,8 +30,9 @@ const userController = {
   async createUser(req, res, next) {
 
     try {
-      
+      // On génère le "sel" pour que bcrypt hash le mot de passe
       let salt = await bcrypt.genSalt(10);
+      // Hashage du mot de passe
       req.body.password = await bcrypt.hash(req.body.password, salt);
       
       const user = req.body;
@@ -60,7 +61,6 @@ const userController = {
 
       if(jwt.verify(req.headers.token, process.env.TOKEN_KEY)) {
 
-        
         const user = req.body;
         
         const result = await userModel.updateUser(user);
@@ -85,17 +85,27 @@ const userController = {
   async logUser(req, res, next) {
     try {
 
-      const sqlQuery = `SELECT password FROM "Users" WHERE "Users".email = $1`;
+      // Récupération du mot de passe hashé grâce à l'email
+      const sqlQuery = `SELECT * FROM get_password($1)`;
       const values = [req.body.email];
 
       let password = await db.query(sqlQuery, values);
-
       password = password.rows[0];
 
+      // Utilisation de bcrypt pour vérifier si le mot de passe envoyé par l'utilisateur correspondnt à celui 
+      // en base de données / le résultat sera true ou false
       const compare = await bcrypt.compare(req.body.password, password.password);
       req.body.password = compare;
+      if(compare === false) {
+        res.json({
+          "errMessage" : " Désolé, un ou plusieurs de vos identifiants sont faux"
+
+        }) 
+      }
       const user = req.body;
+      // On récupère les infos du user
       const result = await userModel.loginUser(user);
+      // Si l'utilisateur est trouvé, on lui assigne un token pour l'authentifier avant de renvoyer le résultat
       if (result !== undefined) {
         const token = jwt.sign({ userIsAdmin: result.user.is_admin }, process.env.TOKEN_KEY);
         result.token = token;
