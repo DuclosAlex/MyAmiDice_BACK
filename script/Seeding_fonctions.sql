@@ -532,4 +532,9 @@ SELECT * from create_users_with_result(
 	'titidu18', 'man@toto.fr', 'password') 
 */
 
+CREATE OR REPLACE FUNCTION get_pasword( email TEXT)
+RETURNS TEXT AS $$ 
+    SELECT password FROM "Users" WHERE email = $1;
+$$ LANGAGE SQL;
+
 COMMIT;
