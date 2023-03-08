@@ -90,6 +90,11 @@ const userController = {
       const values = [req.body.email];
 
       let password = await db.query(sqlQuery, values);
+      if( !password ) {
+        res.json({
+          "errMessage" : " Désolé, un ou plusieurs de vos identifiants sont faux"
+        }) 
+      }
       password = password.rows[0];
 
       // Utilisation de bcrypt pour vérifier si le mot de passe envoyé par l'utilisateur correspondnt à celui 
