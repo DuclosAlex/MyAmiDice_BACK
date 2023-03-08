@@ -90,8 +90,9 @@ const userController = {
       const values = [req.body.email];
 
       let password = await db.query(sqlQuery, values);
+      // On teste si un mot de passe a été trouvé
       if( !password ) {
-        res.json({
+        res.status(401).json({
           "errMessage" : " Désolé, un ou plusieurs de vos identifiants sont faux"
         }) 
       }
@@ -102,7 +103,7 @@ const userController = {
       const compare = await bcrypt.compare(req.body.password, password.password);
       req.body.password = compare;
       if(compare === false) {
-        res.json({
+        res.status(401).json({
           "errMessage" : " Désolé, un ou plusieurs de vos identifiants sont faux"
 
         }) 
