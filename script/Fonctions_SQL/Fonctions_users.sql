@@ -69,3 +69,8 @@ RETURNS VOID AS $$
 $$ LANGUAGE SQL;
 -- Test de fonction OK
 -- SELECT delete_users_by_id(1);
+
+CREATE OR REPLACE FUNCTION get_pasword( email TEXT)
+RETURNS TEXT AS $$ 
+    SELECT password FROM "Users" WHERE email = $1;
+$$ LANGAGE SQL;

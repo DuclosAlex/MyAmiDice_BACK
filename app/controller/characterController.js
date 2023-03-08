@@ -1,7 +1,5 @@
 const { characterModel, characteristicModel } = require('../model');
 const coreController = require('./coreController');
-const jwt = require('jsonwebtoken');
-// const errorHandler = require('../../service/errorService/errorHandler');
 
 const characterController = {
 
