@@ -25,4 +25,5 @@ get_users(),
 update_users_with_result(),
 delete_users_by_id(),
 create_users_with_result();
+
 COMMIT;

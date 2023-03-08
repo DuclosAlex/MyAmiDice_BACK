@@ -1,3 +1,4 @@
+-- SQLBook: Code
 -- Renvoie la liste de toutes les games
 CREATE OR REPLACE FUNCTION get_games() 
 RETURNS TABLE("id" INTEGER, "name" TEXT, "description" TEXT, "max_players" INT, "notes" TEXT, "status" TEXT,  "user_id" INT, "created_at" TIMESTAMPTZ, "updated_at" TIMESTAMPTZ) AS $$
@@ -23,9 +24,9 @@ CREATE OR REPLACE FUNCTION create_or_update_games_with_result(
 RETURNS TABLE("id" INTEGER, "name" TEXT, "description" TEXT, "max_players" INT, "notes" TEXT, "status" TEXT, "user_id" INT) AS $$
 BEGIN
     -- En first on essai l'update 
-    UPDATE "Games" SET "name" = "new_name", "notes" = "new_notes", "status" = "new_status", "description" = "new_description", "user_id" = "new_user_id" WHERE "new_id" = "Games".id;
+    UPDATE "Games" SET "name" = "new_name", "notes" = "new_notes", "status" = "new_status", "description" = "new_description", "user_id" = "new_user_id", "updated_at" = now() WHERE "new_id" = "Games".id;
     IF NOT FOUND THEN 
-        INSERT INTO "Games" ( "name", "max_players", "description", "user_id") VALUES ( "new_name", "new_max_players", "new_description", "new_user_id");
+        INSERT INTO "Games" ( "name", "max_players", "description", "user_id", "status", "notes", created_at) VALUES ( "new_name", "new_max_players", "new_description", "new_user_id", "new_status", "new_notes", now()) RETURNING "Games".id INTO new_id;
     END IF;
     RETURN QUERY SELECT "Games".id,"Games"."name", "Games"."description", "Games"."max_players",  "Games"."notes", "Games"."status", "Games"."user_id" FROM "Games" WHERE "Games".id = new_id;
 END
@@ -39,34 +40,6 @@ SELECT create_or_update_games_with_result(1, 'maGame2', 'test2', 4, 4, "break");
 SELECT * FROM "Games"
 
 */
-
-
-CREATE OR REPLACE FUNCTION get_games_by_id_with_all(
-    IN gameroom_id INT
-)
-RETURNS TABLE( "gameroom" json) AS $$
-
-BEGIN
-
-	RETURN QUERY SELECT row_to_json(Game) as "gameroom"
-	FROM (
-	SELECT "Games"."name", "Games"."description", "Games"."status", "Games"."notes", "Games".max_players, (
-		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT ch.id, ch.firstname, ch.lastname, ch.description, ch.race, ch.class, ch.is_alive, charac.strength ) temptable))) FROM "Characters" as ch
-		lEFT JOIN "Characteristics" as charac ON ch.id = charac.character_id, (
-			SELECT json_agg(row_to_json((SELECT temptable FROM ( SELECT it.name, it.description) temptable ))) FROM "Items" as it
-			LEFT JOIN "Items" ON "Characters".id = "Items".character_id
-			WHERE it.character_id = "Characters".id ) "items"
-			
-		WHERE ch.game_id = gameroom_id) "characters", (
-		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT ma."name", ma."url" ) temptable))) FROM "Maps" as ma
-		JOIN game_has_maps as ghm on ghm.map_id = ma.id
-		JOIN "Games" as g ON g.id = ghm.game_id
-		WHERE g.id = gameroom_id) "maps"
-		FROM "Games" WHERE "Games".id = gameroom_id)
-	Game;
-END;
-
-$$ LANGUAGE plpgsql;
 
 
 -- Supprime la games “:id”

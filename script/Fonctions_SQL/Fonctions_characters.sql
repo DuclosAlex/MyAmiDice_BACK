@@ -1,3 +1,4 @@
+-- SQLBook: Code
 -- Recupere un charater par son id
 CREATE OR REPLACE FUNCTION get_character_by_id_with_all(
     IN character_id INT
@@ -7,7 +8,7 @@ RETURNS TABLE( "character" json) AS $$
 BEGIN
 	RETURN QUERY SELECT row_to_json(Charac) as "character"
 	FROM (
-	SELECT "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters".is_alive, "Characters"."class", "Characters"."description", (
+	SELECT "Characters"."firstname", "Characters"."lastname", "Characters"."race", "Characters".is_alive, "Characters"."class", "Characters"."description", "Characters"."avatar", "Characters"."game_id" (
 		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT id, "name", "description") temptable))) FROM "Skills" WHERE "Characters".id = "Skills".character_id
 		) skills, (
 		SELECT json_agg(row_to_json((SELECT temptable FROM (SELECT id, "name", "quantity", "description") temptable))) FROM "Items" WHERE "Characters".id = "Items".character_id
@@ -32,24 +33,23 @@ CREATE OR REPLACE FUNCTION create_or_update_characters_with_result(
 	IN new_id INT,
     IN new_firstname TEXT, 
     IN new_lastname TEXT, 
-	IN new_avatar "url",
     IN new_description TEXT,
     IN new_race TEXT,
     IN new_class TEXT,
-    IN new_is_alive BOOLEAN,
     IN new_user_id INT,
 	IN new_game_id INT,
-    IN new_image url DEFAULT NULL
+    IN new_avatar url,
+    IN new_is_alive BOOLEAN DEFAULT true
 
 )
-RETURNS TABLE("id" INTEGER, firstname TEXT, lastname TEXT, avatar "url", "description" TEXT, race TEXT, "class" TEXT, is_alive BOOLEAN) AS $$
+RETURNS TABLE("id" INTEGER, firstname TEXT, lastname TEXT, "description" TEXT, race TEXT, "class" TEXT, avatar url, is_alive BOOLEAN) AS $$
 BEGIN
     -- En first on essai l'update 
     UPDATE "Characters" SET firstname = new_firstname, lastname = new_lastname, avatar = new_avatar, "description" = new_description, race = new_race, is_alive= new_is_alive, "class" = new_class WHERE "new_id" = "Characters".id;
     IF NOT FOUND THEN 
-        INSERT INTO "Characters" ( firstname, lastname, avatar, description, race, class, "user_id", "game_id" ) VALUES ( new_firstname, new_lastname, new_avatar, new_description, new_race, new_class, new_user_id, new_game_id) RETURNING "Characters".id INTO new_id; -- on stock la valeur de l'id créer dans "new_id"
+        INSERT INTO "Characters" ( firstname, lastname, description, race, class, "user_id", "game_id", "avatar", is_alive ) VALUES ( new_firstname, new_lastname, new_description, new_race, new_class, new_user_id, new_game_id, new_avatar, new_is_alive) RETURNING "Characters".id INTO new_id; -- on stock la valeur de l'id créer dans "new_id"
     END IF;
-    RETURN QUERY SELECT "Characters".id, "Characters".firstname, "Characters".lastname, "Characters".avatar, "Characters".description, "Characters".race, "Characters".class, "Characters".is_alive FROM "Characters" WHERE "Characters".id = new_id;
+    RETURN QUERY SELECT "Characters".id, "Characters".firstname, "Characters".lastname, "Characters".description, "Characters".race, "Characters".class, "Characters".avatar, "Characters".is_alive FROM "Characters" WHERE "Characters".id = new_id;
 END
 $$ LANGUAGE plpgsql;
 

@@ -11,15 +11,29 @@ const userModel = {
 
         try {
 
-            const sqlQuery = ` SELECT * FROM create_users_with_result($1, $2, $3) `;
+            let values = [];
+            let nbDollar = [];
+            let counter = 1;
 
-            const values = [ user.pseudo, user.email, user.password];
+            for( key in user) {
+
+                console.log("key", key);
+
+                values.push(user[key]);
+                nbDollar.push(`$${counter}`)
+                counter++;
+            };
+
+            const sqlQuery = ` SELECT * FROM create_users_with_result( ${nbDollar.map( dollar => dollar)}) `;   
+            console.log("query", sqlQuery)         
             const result = await db.query(sqlQuery, values);
+            console.log("result", result)
             createUser = result.rows[0];
         } catch(e) {
             console.log(e);
         }
-
+        
+        console.log("user", createUser)
         return createUser;
     },
 
@@ -74,6 +88,8 @@ const userModel = {
         try {
 
             const sqlQuery = ` SELECT * FROM user_login(  ${nbDollar.map( dollar => dollar)} )`;
+            console.log(sqlQuery)
+            console.log(values)
             
             const result = await db.query(sqlQuery, values);
 
