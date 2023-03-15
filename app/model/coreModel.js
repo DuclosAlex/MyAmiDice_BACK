@@ -60,28 +60,15 @@ const coreModel = {
     let nbDollar = [];
     let counter = 1;
     
-    console.log('dataModel', table)
-    console.log('dataModel', data)
-    
-    for( key in data) {
-        
-      console.log("key", key);
-      
+    for( key in data) {      
       values.push(data[key]);
       nbDollar.push(`$${counter}`)
       counter++;
     };
     
-    console.log("values", values);
-    console.log("nbDollar", nbDollar);
-    
     let query = ` SELECT * FROM create_or_update_${table}_with_result( ${nbDollar.map( dollar => dollar)} ) `;
-    
-    console.log('query', query);
-    
+
     const result = await db.query(query,  values );
-    
-    console.log("result", result)
     
     return result.rows[0];
     }

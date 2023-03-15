@@ -8,7 +8,7 @@ BEGIN
 RETURN QUERY SELECT row_to_json(Joueurs) as "user"
 FROM (
 	SELECT us.id, us.email, us.is_admin, us.firstname, us.lastname, us.pseudo,  (
-		SELECT json_agg(characters)
+		SELECT jsonb_agg(characters)
 		FROM(
 			SELECT "Characters".id, "Characters"."firstname", "Characters"."lastname"
 			FROM "Characters"
@@ -16,7 +16,7 @@ FROM (
 		)AS characters
 	) AS characters,
 	(
-		SELECT json_agg(Games)
+		SELECT jsonb_agg(Games)
 		FROM (
 			SELECT gmj."name", gmj.id, gmj."status", gmj."description", gmj."max_players", gmj.user_id, umj."pseudo"
 			FROM "Games" as gmj
@@ -26,11 +26,10 @@ FROM (
 		) as Games
 	) as Games,
 	(
-		SELECT json_agg(Games_Invite)
+		SELECT jsonb_agg(Games_Invite)
 		FROM (
 
 			SELECT gi."name", gi.user_id, "Invite"."id",gi."description", uj."pseudo", "Invite".game_id
->>>>>>> c41834ecd1dfad2b69ec2b71614d988ce385c712
 			FROM "Invite"
 			LEFT JOIN "Games" as gi ON "Invite".game_id = gi.id
 			LEFT JOIN "Users" as uj ON gi.user_id = uj.id

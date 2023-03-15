@@ -21,8 +21,7 @@ INSERT INTO "Characters" ("firstname", "lastname", "avatar", "description", "rac
 
 INSERT INTO "Items" ("name", "quantity", "description", "character_id") VALUES
     ('épée d''acier', 1, 'tu as besoin d''un dessin ? ', 2),
-    ('potion chelou', 3, 'tu veux vraiment boire ça ? ', 1),
-    ('épée d''acier', 1, 'tu as besoin d''un dessin ? ', 1);
+    ('potion chelou', 3, 'tu veux vraiment boire ça ? ', 1);
 
 INSERT INTO "Skills" ("name","description", "character_id") VALUES 
     ( 'Coup de boule', 'technique venant d''un footbaleur légendaire', 1);
